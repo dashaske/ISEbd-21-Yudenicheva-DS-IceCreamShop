@@ -1,5 +1,5 @@
 ﻿using System;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -123,6 +123,17 @@ namespace IceCreamShopView
                    MessageBoxIcon.Error);
                 }
             }
+        }
+        private void пополнениеСкладаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReplenishmentWareHouse>();
+            form.ShowDialog();
+        }
+
+        private void складыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormWareHouses>();
+            form.ShowDialog();
         }
         private void buttonRef_Click(object sender, EventArgs e)
         {

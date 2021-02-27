@@ -13,21 +13,24 @@ using Unity;
 
 namespace IceCreamShopView
 {
-    public partial class FormIngredients : Form
+    public partial class FormWareHouses : Form
     {
         [Dependency]
         public new IUnityContainer Container { get; set; }
-        private readonly IngredientLogic logic;
-        public FormIngredients(IngredientLogic logic)
+
+        private readonly WareHouseLogic logic;
+
+        public FormWareHouses(WareHouseLogic logic)
         {
             InitializeComponent();
             this.logic = logic;
         }
 
-        private void FormIngredients_Load(object sender, EventArgs e)
+        private void FormStoreHouses_Load(object sender, EventArgs e)
         {
             LoadData();
         }
+
         private void LoadData()
         {
             try
@@ -37,29 +40,32 @@ namespace IceCreamShopView
                 {
                     dataGridView.DataSource = list;
                     dataGridView.Columns[0].Visible = false;
-                    dataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView.Columns[1].AutoSizeMode =
+                    DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView.Columns[4].Visible = false;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
             }
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            var form = Container.Resolve<FormIngredient>();
+            var form = Container.Resolve<FormWareHouse>();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 LoadData();
             }
         }
 
-        private void buttonUpd_Click(object sender, EventArgs e)
+        private void buttonUpdate_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 1)
             {
-                var form = Container.Resolve<FormIngredient>();
+                var form = Container.Resolve<FormWareHouse>();
                 form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
@@ -68,7 +74,7 @@ namespace IceCreamShopView
             }
         }
 
-        private void buttonDel_Click(object sender, EventArgs e)
+        private void buttonDelete_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 1)
             {
@@ -79,7 +85,7 @@ namespace IceCreamShopView
                    Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                     try
                     {
-                        logic.Delete(new IngredientBindingModel { Id = id });
+                        logic.Delete(new WareHouseBindingModel { Id = id });
                     }
                     catch (Exception ex)
                     {
@@ -90,7 +96,8 @@ namespace IceCreamShopView
                 }
             }
         }
-        private void buttonRef_Click(object sender, EventArgs e)
+
+        private void buttonRefresh_Click(object sender, EventArgs e)
         {
             LoadData();
         }

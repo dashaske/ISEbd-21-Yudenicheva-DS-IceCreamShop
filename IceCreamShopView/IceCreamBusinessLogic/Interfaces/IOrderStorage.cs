@@ -1,5 +1,5 @@
 ﻿using IceCreamShopBusinessLogic.ViewModels;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using System.Collections.Generic;
 
 namespace IceCreamShopBusinessLogic.Interfaces

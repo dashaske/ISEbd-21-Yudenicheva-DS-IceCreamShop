@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopListImplement.Models;
