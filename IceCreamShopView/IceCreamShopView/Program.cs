@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamShopBusinessLogic.Interfaces;
-using IceCreamShopListImplement.Imlements;
+using IceCreamFileImplement.Implements;
 using System.Windows.Forms;
 using Unity.Lifetime;
 using Unity;
@@ -31,7 +31,7 @@ namespace IceCreamShopView
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<IOrderStorage, OrderStorage>(new
            HierarchicalLifetimeManager());
-            currentContainer.RegisterType<IIceCreamStorage, IceCreameStorage>(new
+            currentContainer.RegisterType<IIceCreamStorage, IceCreamStorage>(new
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<IngredientLogic>(new
            HierarchicalLifetimeManager());
