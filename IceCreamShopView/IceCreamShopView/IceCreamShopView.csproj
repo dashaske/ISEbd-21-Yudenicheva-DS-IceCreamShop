@@ -148,6 +148,10 @@
       <Project>{5a9c1d07-010d-478f-b25d-827ce8a29ee4}</Project>
       <Name>IceCreamShopBusinessLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IceCreamFileImplement\IceCreamFileImplement.csproj">
+      <Project>{25a8a0bf-ee70-493d-a9ca-3c4482ca2c2f}</Project>
+      <Name>IceCreamFileImplement</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IceCreamShopListImplement\IceCreamShopListImplement.csproj">
       <Project>{3c12994c-fd5b-478d-b4dc-76021eeaa1c8}</Project>
       <Name>IceCreamShopListImplement</Name>
