@@ -105,7 +105,7 @@ namespace IceCreamShopListImplement.Imlements
         {
             icecream.IceCreamName = model.IceCreamName;
             icecream.Price = model.Price;
-            // удаляем убранные
+            
             foreach (var key in icecream.IceCreamIngredients.Keys.ToList())
             {
                 if (!model.IceCreamIngredients.ContainsKey(key))
@@ -113,7 +113,7 @@ namespace IceCreamShopListImplement.Imlements
                     icecream.IceCreamIngredients.Remove(key);
                 }
             }
-            // обновляем существуюущие и добавляем новые
+            
             foreach (var icecreams in model.IceCreamIngredients)
             {
                 if (icecream.IceCreamIngredients.ContainsKey(icecreams.Key))
@@ -131,8 +131,6 @@ namespace IceCreamShopListImplement.Imlements
         }
         private IceCreamViewModel CreateModel(IceCream icecream)
         {
-            // требуется дополнительно получить список компонентов для изделия с
-            //названиями и их количество
         Dictionary<int, (string, int)> IceCreamIngredients = new
         Dictionary<int, (string, int)>();
             foreach (var ic in icecream.IceCreamIngredients)
