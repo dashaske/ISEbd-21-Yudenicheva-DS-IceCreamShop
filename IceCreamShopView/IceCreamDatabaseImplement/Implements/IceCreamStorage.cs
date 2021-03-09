@@ -170,11 +170,9 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 var icecreamIngredients = context.IceCreamIngredients.Where(rec =>
                 rec.IceCreamId == model.Id.Value).ToList();
-                // удалили те, которых нет в модели
                 context.IceCreamIngredients.RemoveRange(icecreamIngredients.Where(rec =>
                 !model.IceCreamIngredients.ContainsKey(rec.IngredientId)).ToList());
                 context.SaveChanges();
-                // обновили количество у существующих записей
                 foreach (var updateComponent in icecreamIngredients)
                 {
                     updateComponent.Count =
@@ -183,7 +181,6 @@ namespace IceCreamDatabaseImplement.Implements
                 }
                 context.SaveChanges();
             }
-            // добавили новые
             foreach (var pc in model.IceCreamIngredients)
             {
                 context.IceCreamIngredients.Add(new IceCreamIngredient
