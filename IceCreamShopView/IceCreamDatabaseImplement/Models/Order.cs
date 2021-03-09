@@ -24,5 +24,6 @@ namespace IceCreamDatabaseImplement.Models
         public DateTime DateCreate { get; set; }
 
         public DateTime? DateImplement { get; set; }
+        public virtual IceCream IceCream { get; set; }
     }
 }
