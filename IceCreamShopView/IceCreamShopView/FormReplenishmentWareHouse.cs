@@ -14,16 +14,23 @@ using Unity;
 
 namespace IceCreamShopView
 {
-    public partial class FormIngredientIce : Form
+    public partial class FormReplenishmentWareHouse : Form
     {
         [Dependency]
         public new IUnityContainer Container { get; set; }
-        public int Id
+
+        public int ComponentId
         {
             get { return Convert.ToInt32(comboBoxIngredient.SelectedValue); }
             set { comboBoxIngredient.SelectedValue = value; }
         }
-        public string IngredientName { get { return comboBoxIngredient.Text; } }
+
+        public int WareHouse
+        {
+            get { return Convert.ToInt32(comboBoxIngredient.SelectedValue); }
+            set { comboBoxIngredient.SelectedValue = value; }
+        }
+
         public int Count
         {
             get { return Convert.ToInt32(textBoxCount.Text); }
@@ -32,18 +39,31 @@ namespace IceCreamShopView
                 textBoxCount.Text = value.ToString();
             }
         }
-        public FormIngredientIce(IngredientLogic logic)
+
+        private readonly WareHouseLogic wareHouseLogic;
+
+        public FormReplenishmentWareHouse(IngredientLogic logicIngredient, WareHouseLogic logicWareHouse)
         {
             InitializeComponent();
-            List<IngredientViewModel> list = logic.Read(null);
-            if (list != null)
+            wareHouseLogic = logicWareHouse;
+
+            List<IngredientViewModel> listIngredients = logicIngredient.Read(null);
+            if (listIngredients != null)
             {
                 comboBoxIngredient.DisplayMember = "IngredientName";
                 comboBoxIngredient.ValueMember = "Id";
-                comboBoxIngredient.DataSource = list;
+                comboBoxIngredient.DataSource = listIngredients;
                 comboBoxIngredient.SelectedItem = null;
             }
 
+            List<WareHouseViewModel> listWareHouses = logicWareHouse.Read(null);
+            if (listWareHouses != null)
+            {
+                comboBoxWareHouse.DisplayMember = "WareHouseName";
+                comboBoxWareHouse.ValueMember = "Id";
+                comboBoxWareHouse.DataSource = listWareHouses;
+                comboBoxWareHouse.SelectedItem = null;
+            }
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -56,10 +76,24 @@ namespace IceCreamShopView
             }
             if (comboBoxIngredient.SelectedValue == null)
             {
-                MessageBox.Show("Выберите компонент", "Ошибка", MessageBoxButtons.OK,
+                MessageBox.Show("Выберите продукт", "Ошибка", MessageBoxButtons.OK,
                MessageBoxIcon.Error);
                 return;
             }
+            if (comboBoxWareHouse.SelectedValue == null)
+            {
+                MessageBox.Show("Выберите склад", "Ошибка", MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
+                return;
+            }
+
+            wareHouseLogic.Replenishment(new WareHouseReplenishmentBindingModel
+            {
+                IngredientId = Convert.ToInt32(comboBoxIngredient.SelectedValue),
+                WareHouseId = Convert.ToInt32(comboBoxWareHouse.SelectedValue),
+                Count = Convert.ToInt32(textBoxCount.Text)
+            });
+
             DialogResult = DialogResult.OK;
             Close();
         }

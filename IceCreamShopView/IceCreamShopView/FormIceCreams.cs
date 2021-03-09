@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using IceCreamShopBusinessLogic.BusinessLogics;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using Unity;
 
 namespace IceCreamShopView
@@ -36,6 +36,7 @@ namespace IceCreamShopView
                 {
                     dataGridView.DataSource = list;
                     dataGridView.Columns[0].Visible = false;
+                    dataGridView.Columns[3].Visible = false;
                 }
             }
             catch (Exception ex)

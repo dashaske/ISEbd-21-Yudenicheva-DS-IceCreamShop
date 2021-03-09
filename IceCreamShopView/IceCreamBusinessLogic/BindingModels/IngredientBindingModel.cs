@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IceCreamShopBusinessLogic.BindingModel
+namespace IceCreamShopBusinessLogic.BindingModels
 {
     public class IngredientBindingModel
     {

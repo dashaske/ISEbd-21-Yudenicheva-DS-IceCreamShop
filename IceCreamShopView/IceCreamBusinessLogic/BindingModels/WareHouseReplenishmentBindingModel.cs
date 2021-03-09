@@ -4,10 +4,10 @@ using System.Text;
 
 namespace IceCreamShopBusinessLogic.BindingModels
 {
-    public class CreateOrderBindingModel
-    { //создание заказа
-        public int IceCreamId { get; set; }
+    public class WareHouseReplenishmentBindingModel
+    {
+        public int IngredientId { get; set; }
+        public int WareHouseId { get; set; }
         public int Count { get; set; }
-        public decimal Sum { get; set; }
     }
 }

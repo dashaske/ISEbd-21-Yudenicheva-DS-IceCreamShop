@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using IceCreamShopBusinessLogic.Enums;
 
-namespace IceCreamShopBusinessLogic.BindingModel
+namespace IceCreamShopBusinessLogic.BindingModels
 {
     public class OrderBindingModel
     {
