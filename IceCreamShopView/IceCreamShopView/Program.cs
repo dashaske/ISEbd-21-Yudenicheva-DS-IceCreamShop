@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamShopBusinessLogic.Interfaces;
-using IceCreamShopListImplement.Imlements;
+using IceCreamFileImplement.Implements;
 using System.Windows.Forms;
 using Unity.Lifetime;
 using Unity;
@@ -27,23 +27,17 @@ namespace IceCreamShopView
         private static IUnityContainer BuildUnityContainer()
         {
             var currentContainer = new UnityContainer();
-
-            currentContainer.RegisterType<IIngredientStorage, IngredientStorage>(new HierarchicalLifetimeManager());
-
-            currentContainer.RegisterType<IOrderStorage, OrderStorage>(new HierarchicalLifetimeManager());
-
-            currentContainer.RegisterType<IIceCreamStorage, IceCreameStorage>(new HierarchicalLifetimeManager());
-
-            currentContainer.RegisterType<IWareHouseStorage, WareHouseStorage>(new HierarchicalLifetimeManager());
-
-            currentContainer.RegisterType<IngredientLogic>(new HierarchicalLifetimeManager());
-
+            currentContainer.RegisterType<IIngredientStorage, IngredientStorage>(new
+           HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IOrderStorage, OrderStorage>(new
+           HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IIceCreamStorage, IceCreamStorage>(new
+           HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IngredientLogic>(new
+           HierarchicalLifetimeManager());
             currentContainer.RegisterType<OrderLogic>(new HierarchicalLifetimeManager());
-
-            currentContainer.RegisterType<IceCreamLogic>(new HierarchicalLifetimeManager());
-
-            currentContainer.RegisterType<WareHouseLogic>(new HierarchicalLifetimeManager());
-
+            currentContainer.RegisterType<IceCreamLogic>(new
+           HierarchicalLifetimeManager());
             return currentContainer;
         }
     }
