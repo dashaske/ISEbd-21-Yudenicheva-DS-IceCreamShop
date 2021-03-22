@@ -179,5 +179,10 @@ namespace IceCreamShopListImplement.Imlements
                 }
             }
         }
+
+        public bool CheckAndTake(int count, Dictionary<int, (string, int)> ingredients)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
