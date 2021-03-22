@@ -34,6 +34,7 @@
             this.dateTimePickerTo = new System.Windows.Forms.DateTimePicker();
             this.buttonMake = new System.Windows.Forms.Button();
             this.buttonToPdf = new System.Windows.Forms.Button();
+            this.reportViewer = new Microsoft.Reporting.WinForms.ReportViewer();
             this.SuspendLayout();
             // 
             // dateTimePickerFrom
@@ -76,6 +77,7 @@
             this.buttonMake.TabIndex = 4;
             this.buttonMake.Text = "Сформировать";
             this.buttonMake.UseVisualStyleBackColor = true;
+            this.buttonMake.Click += new System.EventHandler(this.buttonMake_Click);
             // 
             // buttonToPdf
             // 
@@ -85,12 +87,22 @@
             this.buttonToPdf.TabIndex = 5;
             this.buttonToPdf.Text = "В Pdf";
             this.buttonToPdf.UseVisualStyleBackColor = true;
+            this.buttonToPdf.Click += new System.EventHandler(this.buttonToPdf_Click);
+            // 
+            // reportViewer
+            // 
+            this.reportViewer.Location = new System.Drawing.Point(4, 46);
+            this.reportViewer.Name = "reportViewer";
+            this.reportViewer.ServerReport.BearerToken = null;
+            this.reportViewer.Size = new System.Drawing.Size(790, 402);
+            this.reportViewer.TabIndex = 6;
             // 
             // FormReportOrders
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.reportViewer);
             this.Controls.Add(this.buttonToPdf);
             this.Controls.Add(this.buttonMake);
             this.Controls.Add(this.dateTimePickerTo);
@@ -99,6 +111,7 @@
             this.Controls.Add(this.dateTimePickerFrom);
             this.Name = "FormReportOrders";
             this.Text = "Список заказов";
+            this.Load += new System.EventHandler(this.FormReportOrders_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -112,5 +125,6 @@
         private System.Windows.Forms.DateTimePicker dateTimePickerTo;
         private System.Windows.Forms.Button buttonMake;
         private System.Windows.Forms.Button buttonToPdf;
+        private Microsoft.Reporting.WinForms.ReportViewer reportViewer;
     }
 }

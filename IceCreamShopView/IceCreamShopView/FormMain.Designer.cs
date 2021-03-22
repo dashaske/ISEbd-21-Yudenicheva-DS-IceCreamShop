@@ -154,18 +154,21 @@
             this.списокИнгредиентовToolStripMenuItem.Name = "списокИнгредиентовToolStripMenuItem";
             this.списокИнгредиентовToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
             this.списокИнгредиентовToolStripMenuItem.Text = "Список мороженого";
+            this.списокИнгредиентовToolStripMenuItem.Click += new System.EventHandler(this.списокИнгредиентовToolStripMenuItem_Click);
             // 
             // ингредиентыПоМороженымToolStripMenuItem
             // 
             this.ингредиентыПоМороженымToolStripMenuItem.Name = "ингредиентыПоМороженымToolStripMenuItem";
             this.ингредиентыПоМороженымToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
             this.ингредиентыПоМороженымToolStripMenuItem.Text = "Ингредиенты по мороженым";
+            this.ингредиентыПоМороженымToolStripMenuItem.Click += new System.EventHandler(this.ингредиентыПоМороженымToolStripMenuItem_Click);
             // 
             // списокЗаказовToolStripMenuItem
             // 
             this.списокЗаказовToolStripMenuItem.Name = "списокЗаказовToolStripMenuItem";
             this.списокЗаказовToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
             this.списокЗаказовToolStripMenuItem.Text = "Список заказов";
+            this.списокЗаказовToolStripMenuItem.Click += new System.EventHandler(this.списокЗаказовToolStripMenuItem_Click);
             // 
             // FormMain
             // 

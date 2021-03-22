@@ -44,6 +44,7 @@
             this.buttonSaveToExcel.TabIndex = 0;
             this.buttonSaveToExcel.Text = "Сохранить в эксель";
             this.buttonSaveToExcel.UseVisualStyleBackColor = true;
+            this.buttonSaveToExcel.Click += new System.EventHandler(this.buttonSaveToExcel_Click);
             // 
             // dataGridView
             // 
@@ -81,6 +82,7 @@
             this.Controls.Add(this.buttonSaveToExcel);
             this.Name = "FormReportIngredientIceCream";
             this.Text = "FormReportIngredientIceCream";
+            this.Load += new System.EventHandler(this.FormReportIngredientIceCream_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
 

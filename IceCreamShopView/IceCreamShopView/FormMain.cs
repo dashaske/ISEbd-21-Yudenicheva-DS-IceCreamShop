@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Unity;
+using Microsoft.Reporting.WebForms;
 
 namespace IceCreamShopView
 {
@@ -18,10 +19,12 @@ namespace IceCreamShopView
         [Dependency]
         public new IUnityContainer Container { get; set; }
         private readonly OrderLogic _orderLogic;
-        public FormMain(OrderLogic orderLogic)
+        private ReportLogic report;
+        public FormMain(OrderLogic orderLogic, ReportLogic Report)
         {
             InitializeComponent();
             this._orderLogic = orderLogic;
+            report = Report;
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -127,6 +130,34 @@ namespace IceCreamShopView
         private void buttonRef_Click(object sender, EventArgs e)
         {
             LoadData();
+        }
+
+        private void списокЗаказовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReportOrders>();
+            form.ShowDialog();
+        }
+
+        private void ингредиентыПоМороженымToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReportIngredientIceCream>();
+            form.ShowDialog();
+        }
+
+        private void списокИнгредиентовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new SaveFileDialog { Filter = "docx|*.docx" })
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    report.SaveIceCreamsToWordFile(new ReportBindingModel
+                    {
+                        FileName = dialog.FileName
+                    });
+                    MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                }
+            }
         }
     }
 }
