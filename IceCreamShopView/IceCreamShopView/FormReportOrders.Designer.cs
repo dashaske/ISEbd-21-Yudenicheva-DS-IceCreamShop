@@ -91,6 +91,7 @@
             // 
             // reportViewer
             // 
+            this.reportViewer.LocalReport.ReportEmbeddedResource = "IceCreamShopView.Report.rdlc";
             this.reportViewer.Location = new System.Drawing.Point(4, 46);
             this.reportViewer.Name = "reportViewer";
             this.reportViewer.ServerReport.BearerToken = null;

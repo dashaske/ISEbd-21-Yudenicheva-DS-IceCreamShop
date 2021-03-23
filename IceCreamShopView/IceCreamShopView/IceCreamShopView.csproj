@@ -301,7 +301,39 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Report.rdlc" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\FormCreateOrder.datasource" />
+    <None Include="Properties\DataSources\FormIceCream.datasource" />
+    <None Include="Properties\DataSources\FormIceCreams.datasource" />
+    <None Include="Properties\DataSources\FormIngredient.datasource" />
+    <None Include="Properties\DataSources\FormIngredientIce.datasource" />
+    <None Include="Properties\DataSources\FormIngredients.datasource" />
+    <None Include="Properties\DataSources\FormMain.datasource" />
+    <None Include="Properties\DataSources\FormReportIngredientIceCream.datasource" />
+    <None Include="Properties\DataSources\FormReportOrders.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.ChangeStatusBindingModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.CreateOrderBindingModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.IceCreamBindingModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.IngredientBindingModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.OrderBindingModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.ReportBindingModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BusinessLogics.IceCreamLogic.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BusinessLogics.IngredientLogic.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BusinessLogics.OrderLogic.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BusinessLogics.ReportLogic.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.Interfaces.IIceCreamStorage.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.Interfaces.IIngredientStorage.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.Interfaces.IOrderStorage.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportIngredientIceCreamViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportOrdersViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModels.IceCreamViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModels.IngredientViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModels.OrderViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopView.Properties.Resources.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopView.Properties.Settings.datasource" />
+    <None Include="Properties\DataSources\Program.datasource" />
+    <None Include="Properties\DataSources\SqlServerTypes.Utilities.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

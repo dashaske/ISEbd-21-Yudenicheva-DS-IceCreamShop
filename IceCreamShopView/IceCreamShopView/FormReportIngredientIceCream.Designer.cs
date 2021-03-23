@@ -30,8 +30,8 @@
         {
             this.buttonSaveToExcel = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.ColumnIngredient = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnIceCream = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnIngredient = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -50,23 +50,23 @@
             // 
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ColumnIngredient,
             this.ColumnIceCream,
+            this.ColumnIngredient,
             this.ColumnCount});
             this.dataGridView.Location = new System.Drawing.Point(13, 70);
             this.dataGridView.Name = "dataGridView";
             this.dataGridView.Size = new System.Drawing.Size(350, 364);
             this.dataGridView.TabIndex = 1;
             // 
-            // ColumnIngredient
-            // 
-            this.ColumnIngredient.HeaderText = "Ингредиент";
-            this.ColumnIngredient.Name = "ColumnIngredient";
-            // 
             // ColumnIceCream
             // 
             this.ColumnIceCream.HeaderText = "Мороженое";
             this.ColumnIceCream.Name = "ColumnIceCream";
+            // 
+            // ColumnIngredient
+            // 
+            this.ColumnIngredient.HeaderText = "Ингредиент";
+            this.ColumnIngredient.Name = "ColumnIngredient";
             // 
             // ColumnCount
             // 
@@ -92,8 +92,8 @@
 
         private System.Windows.Forms.Button buttonSaveToExcel;
         private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIngredient;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIceCream;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnIngredient;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCount;
     }
 }
