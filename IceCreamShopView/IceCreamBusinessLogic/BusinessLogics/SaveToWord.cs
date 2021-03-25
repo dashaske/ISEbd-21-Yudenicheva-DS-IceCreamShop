@@ -122,8 +122,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 {
                     paragraphMarkRunProperties.AppendChild(new FontSize
                     {
-                        Val =
-                    paragraphProperties.Size
+                        Val = paragraphProperties.Size
                     });
                 }
                 properties.AppendChild(paragraphMarkRunProperties);

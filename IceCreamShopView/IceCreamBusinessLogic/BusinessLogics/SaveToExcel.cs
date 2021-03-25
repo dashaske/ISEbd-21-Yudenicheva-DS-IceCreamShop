@@ -18,26 +18,21 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             using (SpreadsheetDocument spreadsheetDocument =
             SpreadsheetDocument.Create(info.FileName, SpreadsheetDocumentType.Workbook))
             {
-                // Создаем книгу (в ней хранятся листы)
                 WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
                 workbookpart.Workbook = new Workbook();
                 CreateStyles(workbookpart);
-                // Получаем/создаем хранилище текстов для книги
                 SharedStringTablePart shareStringPart =
                 spreadsheetDocument.WorkbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0
                 ?
                 spreadsheetDocument.WorkbookPart.GetPartsOfType<SharedStringTablePart>().First()
                 :
                 spreadsheetDocument.WorkbookPart.AddNewPart<SharedStringTablePart>();
-                // Создаем SharedStringTable, если его нет
                 if (shareStringPart.SharedStringTable == null)
                 {
                     shareStringPart.SharedStringTable = new SharedStringTable();
                 }
-                // Создаем лист в книгу
                 WorksheetPart worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
                 worksheetPart.Worksheet = new Worksheet(new SheetData());
-                // Добавляем лист в книгу
                 Sheets sheets =
                 spreadsheetDocument.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
                 Sheet sheet = new Sheet()
@@ -113,7 +108,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     });
                     rowIndex++;
                 }
-
                 workbookpart.Workbook.Save();
             }
         }
@@ -319,7 +313,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         private static void InsertCellInWorksheet(ExcelCellParameters cellParameters)
         {
             SheetData sheetData = cellParameters.Worksheet.GetFirstChild<SheetData>();
-            // Ищем строку, либо добавляем ее
             Row row;
             if (sheetData.Elements<Row>().Where(r => r.RowIndex ==
             cellParameters.RowIndex).Count() != 0)
@@ -332,7 +325,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 row = new Row() { RowIndex = cellParameters.RowIndex };
                 sheetData.Append(row);
             }
-            // Ищем нужную ячейку
             Cell cell;
             if (row.Elements<Cell>().Where(c => c.CellReference.Value == cellParameters.CellReference).Count() > 0)
             {
@@ -341,8 +333,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             }
             else
             {
-                // Все ячейки должны быть последовательно друг за другом расположены
-                // нужно определить, после какой вставлять
                 Cell refCell = null;
                 foreach (Cell rowCell in row.Elements<Cell>())
                 {
@@ -360,7 +350,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 row.InsertBefore(newCell, refCell);
                 cell = newCell;
             }
-            // вставляем новый текст
             cellParameters.ShareStringPart.SharedStringTable.AppendChild(new
             SharedStringItem(new Text(cellParameters.Text)));
             cellParameters.ShareStringPart.SharedStringTable.Save();
