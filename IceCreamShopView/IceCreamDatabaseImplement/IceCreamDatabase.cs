@@ -17,8 +17,15 @@ namespace IceCreamDatabaseImplement
             base.OnConfiguring(optionsBuilder);
         }
         public virtual DbSet<Ingredient> Ingredients { set; get; }
+
         public virtual DbSet<IceCream> IceCreams { set; get; }
+
         public virtual DbSet<IceCreamIngredient> IceCreamIngredients { set; get; }
+
         public virtual DbSet<Order> Orders { set; get; }
+
+        public virtual DbSet<WareHouse> WareHouses { set; get; }
+
+        public virtual DbSet<WareHouseIngredient> WareHouseIngredients { set; get; }
     }
 }
