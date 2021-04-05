@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamDatabaseImplement.Migrations
 {
     [DbContext(typeof(IceCreamDatabase))]
-    [Migration("20210309072112_InitialCreate")]
+    [Migration("20210405161802_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,6 +113,54 @@ namespace IceCreamDatabaseImplement.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResponsiblePersonFCS")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WareHouseName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WareHouses");
+                });
+
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WareHouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("WareHouseId");
+
+                    b.ToTable("WareHouseIngredients");
+                });
+
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.IceCreamIngredient", b =>
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.IceCream", "IceCream")
@@ -130,9 +178,24 @@ namespace IceCreamDatabaseImplement.Migrations
 
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.Order", b =>
                 {
-                    b.HasOne("IceCreamDatabaseImplement.Models.IceCream", null)
-                        .WithMany("Order")
+                    b.HasOne("IceCreamDatabaseImplement.Models.IceCream", "IceCream")
+                        .WithMany("Orders")
                         .HasForeignKey("IceCreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>
+                {
+                    b.HasOne("IceCreamDatabaseImplement.Models.Ingredient", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IceCreamDatabaseImplement.Models.WareHouse", "WareHouse")
+                        .WithMany("WareHouseIngredients")
+                        .HasForeignKey("WareHouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
