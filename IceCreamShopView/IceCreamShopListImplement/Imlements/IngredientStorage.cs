@@ -1,5 +1,5 @@
 ﻿using System;
-using IceCreamShopBusinessLogic.BindingModels;
+using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopListImplement.Models;

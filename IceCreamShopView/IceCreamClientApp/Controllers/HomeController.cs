@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using IceCreamShopBusinessLogic.BindingModels;
 using Microsoft.AspNetCore.Mvc;
-using IceCreamBuisnessLogic.ViewModels;
-using IceCreamBuisnessLogic.BindingModels;
+using IceCreamShopBusinessLogic.ViewModel;
+using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamClientApp.Models;
+using IceCreamShopBusinessLogic.ViewModels;
 
 namespace IceCreamClientApp.Controllers
 {
@@ -114,11 +116,11 @@ namespace IceCreamClientApp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Packages = APIClient.GetRequest<List<PackageViewModel>>("api/main/getpackagelist");
+            ViewBag.IceCreams = APIClient.GetRequest<List<IceCreamViewModel>>("api/main/geticecreamlist");
             return View();
         }
         [HttpPost]
-        public void Create(int package, int count, decimal sum)
+        public void Create(int icecream, int count, decimal sum)
         {
             if (count == 0 || sum == 0)
             {
@@ -127,7 +129,7 @@ namespace IceCreamClientApp.Controllers
             APIClient.PostRequest("api/main/createorder", new CreateOrderBindingModel
             {
                 ClientId = (int)Program.Client.Id,
-                PackageId = package,
+                IceCreamId = icecream,
                 Count = count,
                 Sum = sum
             });
@@ -135,9 +137,9 @@ namespace IceCreamClientApp.Controllers
         }
 
         [HttpPost]
-        public decimal Calc(decimal count, int package)
+        public decimal Calc(decimal count, int icecream)
         {
-            PackageViewModel prod = APIClient.GetRequest<PackageViewModel>($"api/main/getpackage?packageId={package}");
+            IceCreamViewModel prod = APIClient.GetRequest<IceCreamViewModel>($"api/main/geticecream?icecreamId={icecream}");
             return count * prod.Price;
         }
     }

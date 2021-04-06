@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IceCreamShopBusinessLogic.Interfaces;
-using IceCreamShopBusinessLogic.BuisnessLogics;
+using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamDatabaseImplement.Implements;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

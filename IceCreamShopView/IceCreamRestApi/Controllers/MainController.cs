@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using IceCreamShopBusinessLogic.BuisnessLogics;
+using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopBusinessLogic.BindingModel;
 
