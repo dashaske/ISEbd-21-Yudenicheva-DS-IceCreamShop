@@ -110,7 +110,7 @@ namespace IceCreamDatabaseImplement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<int>("Count")
@@ -159,10 +159,12 @@ namespace IceCreamDatabaseImplement.Migrations
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.Client", null)
                         .WithMany("Order")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("IceCreamDatabaseImplement.Models.IceCream", "IceCream")
-                        .WithMany("Orders")
+                        .WithMany("Order")
                         .HasForeignKey("IceCreamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

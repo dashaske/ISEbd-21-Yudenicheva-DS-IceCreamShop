@@ -93,7 +93,7 @@ namespace IceCreamDatabaseImplement.Implements
             using (var context = new IceCreamDatabase())
             {
                 context.Orders.Add(CreateModel(model, new Order()));
-                context.SaveChanges();
+                context.SaveChanges(); 
             }
         }
 
@@ -138,6 +138,7 @@ namespace IceCreamDatabaseImplement.Implements
             order.Status = model.Status;
             order.DateCreate = model.DateCreate;
             order.DateImplement = model.DateImplement;
+            order.ClientId = (int)model.ClientId; 
             return order;
         }
     }

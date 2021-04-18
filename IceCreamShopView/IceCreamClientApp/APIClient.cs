@@ -25,7 +25,7 @@ namespace IceCreamClientApp
             var result = response.Result.Content.ReadAsStringAsync().Result;
             if (response.Result.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<T>(result);
+                return JsonConvert.DeserializeObject<T>(result); 
             }
             else
             {

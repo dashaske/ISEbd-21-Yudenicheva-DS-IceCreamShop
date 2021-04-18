@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamDatabaseImplement.Migrations
 {
     [DbContext(typeof(IceCreamDatabase))]
-    [Migration("20210406070608_addClient")]
-    partial class addClient
+    [Migration("20210418081753_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -112,7 +112,7 @@ namespace IceCreamDatabaseImplement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<int>("Count")
@@ -161,10 +161,12 @@ namespace IceCreamDatabaseImplement.Migrations
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.Client", null)
                         .WithMany("Order")
-                        .HasForeignKey("ClientId");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("IceCreamDatabaseImplement.Models.IceCream", "IceCream")
-                        .WithMany("Orders")
+                        .WithMany("Order")
                         .HasForeignKey("IceCreamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
