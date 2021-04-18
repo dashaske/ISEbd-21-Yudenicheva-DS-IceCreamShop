@@ -17,5 +17,6 @@ namespace IceCreamShopBusinessLogic.ViewModels
         public decimal Price { get; set; }
         [DataMember]
         public Dictionary<int, (string, int)> IceCreamIngredients { get; set; }
+
     }
 }

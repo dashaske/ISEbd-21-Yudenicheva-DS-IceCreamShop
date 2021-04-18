@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.ViewModel;
-using System.Text;
 
 namespace IceCreamShopBusinessLogic.Interfaces
 {

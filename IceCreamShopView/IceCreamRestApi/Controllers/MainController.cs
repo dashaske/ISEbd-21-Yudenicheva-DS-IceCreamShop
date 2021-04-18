@@ -14,19 +14,19 @@ namespace IceCreamRestApi.Controllers
     public class MainController : ControllerBase
     {
         private readonly OrderLogic _order;
-        private readonly IceCreamLogic _package;
+        private readonly IceCreamLogic _icecream;
         private readonly OrderLogic _main;
-        public MainController(OrderLogic order, IceCreamLogic package, OrderLogic main)
+        public MainController(OrderLogic order, IceCreamLogic icecream, OrderLogic main)
         {
             _order = order;
-            _package = package;
+            _icecream = icecream;
             _main = main;
         }
         [HttpGet]
-        public List<IceCreamViewModel> GetPackageList() => _package.Read(null)?.ToList();
+        public List<IceCreamViewModel> GetIceCreamList() => _icecream.Read(null)?.ToList();
 
         [HttpGet]
-        public IceCreamViewModel GetPackage(int packageId) => _package.Read(new IceCreamBindingModel { Id = packageId })?[0];
+        public IceCreamViewModel GetIceCream(int icecreamId) => _icecream.Read(new IceCreamBindingModel { Id = icecreamId })?[0];
 
         [HttpGet]
         public List<OrderViewModel> GetOrders(int clientId) => _order.Read(new OrderBindingModel { ClientId = clientId });
