@@ -42,14 +42,10 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     Ingredients = new List<Tuple<string, int>>(),
                     TotalCount = 0
                 };
-                foreach (var ingredient in ingredients)
+                foreach (var ingredient in icecream.IceCreamIngredients)
                 {
-                    if (icecream.IceCreamIngredients.ContainsKey(ingredient.Id))
-                    {
-                        record.Ingredients.Add(new Tuple<string, int>(ingredient.IngredientName,
-                        icecream.IceCreamIngredients[ingredient.Id].Item2));
-                        record.TotalCount += icecream.IceCreamIngredients[ingredient.Id].Item2;
-                    }
+                    record.Ingredients.Add(new Tuple<string, int>(ingredient.Value.Item1, ingredient.Value.Item2));
+                    record.TotalCount += ingredient.Value.Item2;
                 }
                 list.Add(record);
             }

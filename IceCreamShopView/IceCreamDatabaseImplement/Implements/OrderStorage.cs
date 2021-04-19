@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.Enums;
 using System.Linq;
 using IceCreamDatabaseImplement.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,19 +16,22 @@ namespace IceCreamDatabaseImplement.Implements
         {
             using (var context = new IceCreamDatabase())
             {
-                return context.Orders.Select(rec => new OrderViewModel
-                {
-                    Id = rec.Id,
-                    IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
-                    IceCreamId = rec.IceCreamId,
-                    Count = rec.Count,
-                    Sum = rec.Sum,
-                    Status = rec.Status,
-                    DateCreate = rec.DateCreate,
-                    DateImplement = rec.DateImplement,
-                    ClientId = rec.ClientId,
-                    ClientFIO = context.Clients.FirstOrDefault(x => x.Id == rec.ClientId).ClientFIO
-                })
+                return context.Orders.Include(rec => rec.IceCream).Include(rec => rec.Client)
+                    .Include(rec => rec.Implementer).Select(rec => new OrderViewModel
+                    {
+                        Id = rec.Id,
+                        IceCreamName = rec.IceCream.IceCreamName,
+                        IceCreamId = rec.IceCreamId,
+                        Count = rec.Count,
+                        Sum = rec.Sum,
+                        Status = rec.Status,
+                        DateCreate = rec.DateCreate,
+                        DateImplement = rec.DateImplement,
+                        ClientId = rec.ClientId,
+                        ClientFIO = rec.Client.ClientFIO,
+                        ImplementerId = rec.ImplementerId,
+                        ImplementerFIO = rec.ImplementerId.HasValue ? rec.Implementer.ImplementerFIO : string.Empty
+                    })
                 .ToList();
             }
         }
@@ -42,22 +46,34 @@ namespace IceCreamDatabaseImplement.Implements
             using (var context = new IceCreamDatabase())
             {
                 return context.Orders
-                .Where(rec => (model.ClientId.HasValue && rec.ClientId == model.ClientId) || (!model.DateFrom.HasValue && !model.DateTo.HasValue && rec.DateCreate == model.DateCreate) ||
-                (model.DateFrom.HasValue && model.DateTo.HasValue && rec.DateCreate.Date
-                >= model.DateFrom.Value.Date && rec.DateCreate.Date <= model.DateTo.Value.Date))
-                .Select(rec => new OrderViewModel
-                {
-                    Id = rec.Id,
-                    IceCreamName = context.IceCreams.Include(x => x.Order).FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
-                    IceCreamId = rec.IceCreamId,
-                    Count = rec.Count,
-                    Sum = rec.Sum,
-                    Status = rec.Status,
-                    DateCreate = rec.DateCreate,
-                    DateImplement = rec.DateImplement,
-                    ClientId = rec.ClientId
-                })
-                .ToList();
+                    .Include(rec => rec.IceCream)
+                    .Include(rec => rec.Client)
+                    .Include(rec => rec.Implementer)
+                    .Where(rec => (!model.DateFrom.HasValue && !model.DateTo.HasValue &&
+                    rec.DateCreate.Date == model.DateCreate.Date) ||
+                    (model.DateFrom.HasValue && model.DateTo.HasValue &&
+                    rec.DateCreate.Date >= model.DateFrom.Value.Date && rec.DateCreate.Date <=
+                    model.DateTo.Value.Date) ||
+                    (model.ClientId.HasValue && rec.ClientId == model.ClientId) ||
+                    (model.FreeOrders.HasValue && model.FreeOrders.Value && rec.Status == OrderStatus.Принят) ||
+                    (model.ImplementerId.HasValue && rec.ImplementerId ==
+                    model.ImplementerId && rec.Status == OrderStatus.Выполняется))
+                    .Select(rec => new OrderViewModel
+                    {
+                        Id = rec.Id,
+                        Count = rec.Count,
+                        DateCreate = rec.DateCreate,
+                        DateImplement = rec.DateImplement,
+                        IceCreamId = rec.IceCreamId,
+                        IceCreamName = rec.IceCream.IceCreamName,
+                        ClientId = rec.ClientId,
+                        ClientFIO = rec.Client.ClientFIO,
+                        ImplementerId = rec.ImplementerId,
+                        ImplementerFIO = rec.ImplementerId.HasValue ? rec.Implementer.ImplementerFIO : string.Empty,
+                        Status = rec.Status,
+                        Sum = rec.Sum
+                    })
+                    .ToList();
             }
         }
 
@@ -69,20 +85,23 @@ namespace IceCreamDatabaseImplement.Implements
             }
             using (var context = new IceCreamDatabase())
             {
-                var order = context.Orders
+                var order = context.Orders.Include(rec => rec.IceCream).Include(rec => rec.Client).Include(rec => rec.Implementer)
                 .FirstOrDefault(rec => rec.Id == model.Id);
                 return order != null ?
                 new OrderViewModel
                 {
                     Id = order.Id,
-                    IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == order.IceCreamId).IceCreamName,
+                    IceCreamName = order.IceCream.IceCreamName,
                     IceCreamId = order.IceCreamId,
                     Count = order.Count,
                     Sum = order.Sum,
                     Status = order.Status,
                     DateCreate = order.DateCreate,
                     DateImplement = order.DateImplement,
-                    ClientId = order.ClientId
+                    ClientId = order.ClientId,
+                    ClientFIO = order.Client.ClientFIO,
+                    ImplementerId = order.ImplementerId,
+                    ImplementerFIO = order.ImplementerId.HasValue ? order.Implementer.ImplementerFIO : string.Empty
                 } :
                 null;
             }
@@ -138,7 +157,8 @@ namespace IceCreamDatabaseImplement.Implements
             order.Status = model.Status;
             order.DateCreate = model.DateCreate;
             order.DateImplement = model.DateImplement;
-            order.ClientId = (int)model.ClientId; 
+            order.ClientId = (int)model.ClientId;
+            order.ImplementerId = model.ImplementerId;
             return order;
         }
     }

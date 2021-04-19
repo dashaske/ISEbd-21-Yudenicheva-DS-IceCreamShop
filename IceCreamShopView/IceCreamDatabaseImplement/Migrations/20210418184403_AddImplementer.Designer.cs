@@ -4,14 +4,16 @@ using IceCreamDatabaseImplement;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IceCreamDatabaseImplement.Migrations
 {
     [DbContext(typeof(IceCreamDatabase))]
-    partial class IceCreamDatabaseModelSnapshot : ModelSnapshot
+    [Migration("20210418184403_AddImplementer")]
+    partial class AddImplementer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

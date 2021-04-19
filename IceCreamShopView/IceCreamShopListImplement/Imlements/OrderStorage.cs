@@ -2,6 +2,7 @@
 using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
+using IceCreamShopBusinessLogic.Enums;
 using IceCreamShopListImplement.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,25 +20,58 @@ namespace IceCreamShopListImplement.Imlements
         private Order CreateModel(OrderBindingModel model, Order order)
         {
             order.IceCreamId = model.IceCreamId;
+            order.ImplementerId = model.ImplementerId;
+            order.ClientId = (int)model.ClientId;
             order.Count = model.Count;
             order.Sum = model.Sum;
             order.Status = model.Status;
-            order.DateCreate = model.DateCreate;
             order.DateImplement = model.DateImplement;
+            order.DateCreate = model.DateCreate; 
 
             return order;
         }
 
         private OrderViewModel CreateModel(Order order)
         {
+            string icecreamName = null;
+            foreach (var icecream in source.IceCreams)
+            {
+                if (icecream.Id == order.IceCreamId)
+                {
+                    icecreamName = icecream.IceCreamName;
+                }
+            }
+
+            string clientFIO = null;
+            foreach (var client in source.Clients)
+            {
+                if (client.Id == order.ClientId)
+                {
+                    clientFIO = client.ClientFIO;
+                }
+            }
+
+            string ImplementerFIO = null;
+            foreach (var implementer in source.Implementers)
+            {
+                if (implementer.Id == order.IceCreamId)
+                {
+                    ImplementerFIO = implementer.ImplementerFIO;
+                }
+            }
+
             return new OrderViewModel
             {
                 Id = order.Id,
-                IceCreamName = source.IceCreams.FirstOrDefault(icecream => icecream.Id == order.IceCreamId)?.IceCreamName,
+                ClientId = order.ClientId,
                 IceCreamId = order.IceCreamId,
-                Count = order.Count,
+                ImplementerId = order.ImplementerId,
+                ImplementerFIO = ImplementerFIO,
+                ClientFIO = clientFIO,
                 Sum = order.Sum,
+                Count = order.Count,
                 Status = order.Status,
+                IceCreamName = icecreamName,
                 DateCreate = order.DateCreate,
                 DateImplement = order.DateImplement
             };
@@ -60,14 +94,23 @@ namespace IceCreamShopListImplement.Imlements
                 return null;
             }
 
-            return source.Orders
-            .Where(rec => (!model.DateFrom.HasValue && !model.DateTo.HasValue &&
-            rec.DateCreate.Date == model.DateCreate.Date) ||
-            (model.DateFrom.HasValue && model.DateTo.HasValue && rec.DateCreate.Date
-            >= model.DateFrom.Value.Date && rec.DateCreate.Date <= model.DateTo.Value.Date) ||
-            (model.ClientId.HasValue && rec.ClientId == model.ClientId))
-            .Select(CreateModel)
-            .ToList();
+            List<OrderViewModel> result = new List<OrderViewModel>();
+            foreach (var order in source.Orders)
+            {
+                if ((!model.DateFrom.HasValue && !model.DateTo.HasValue &&
+                    order.DateCreate.Date == model.DateCreate.Date) ||
+                    (model.DateFrom.HasValue && model.DateTo.HasValue &&
+                    order.DateCreate.Date >= model.DateFrom.Value.Date && order.DateCreate.Date <=
+                    model.DateTo.Value.Date) ||
+                    (model.ClientId.HasValue && order.ClientId == model.ClientId) ||
+                    (model.FreeOrders.HasValue && model.FreeOrders.Value && order.Status == OrderStatus.Принят) ||
+                    (model.ImplementerId.HasValue && order.ImplementerId ==
+                    model.ImplementerId && order.Status == OrderStatus.Выполняется))
+                {
+                    result.Add(CreateModel(order));
+                }
+            }
+            return result;
         }
 
         public OrderViewModel GetElement(OrderBindingModel model)
@@ -76,11 +119,12 @@ namespace IceCreamShopListImplement.Imlements
             {
                 return null;
             }
-            foreach (var order in source.Orders)
+            foreach (var ingredient in source.Orders)
             {
-                if (order.Id == model.Id)
+                if (ingredient.Id == model.Id || ingredient.IceCreamId ==
+               model.IceCreamId)
                 {
-                    return CreateModel(order);
+                    return CreateModel(ingredient);
                 }
             }
             return null;
