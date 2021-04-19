@@ -3,12 +3,6 @@ using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamShopBusinessLogic.ViewModels;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Unity;
 
@@ -20,25 +14,38 @@ namespace IceCreamShopView
         public new IUnityContainer Container { get; set; }
         private readonly IceCreamLogic _logicP;
         private readonly OrderLogic _logicO;
-        public FormCreateOrder(IceCreamLogic logicP, OrderLogic logicO)
+        private readonly ClientLogic _logicClient;
+        public FormCreateOrder(IceCreamLogic logicP, OrderLogic logicO, ClientLogic logicClient)
         {
             InitializeComponent();
             _logicP = logicP;
             _logicO = logicO;
+            _logicClient = logicClient;
         }
 
         private void FormCreateOrder_Load(object sender, EventArgs e)
         {
             try
             {
-                List<IceCreamViewModel> listP = _logicP.Read(null);
-                if (listP != null)
+
+                List<IceCreamViewModel> list = _logicP.Read(null);
+                if (list != null)
                 {
                     comboBoxIceCream.DisplayMember = "IceCreamName";
                     comboBoxIceCream.ValueMember = "Id";
-                    comboBoxIceCream.DataSource = listP;
+                    comboBoxIceCream.DataSource = list;
                     comboBoxIceCream.SelectedItem = null;
                 }
+
+
+                var secures = _logicP.Read(null);
+                var clients = _logicClient.Read(null);
+                comboBoxIceCream.DataSource = secures;
+                comboBoxIceCream.DisplayMember = "IceCreamName";
+                comboBoxIceCream.ValueMember = "Id";
+                comboBoxClient.DataSource = clients;
+                comboBoxClient.DisplayMember = "ClientFIO";
+                comboBoxClient.ValueMember = "Id";
             }
             catch (Exception ex)
             {
@@ -54,11 +61,11 @@ namespace IceCreamShopView
                 try
                 {
                     int id = Convert.ToInt32(comboBoxIceCream.SelectedValue);
-                    IceCreamViewModel product = _logicP.Read(new IceCreamBindingModel
+                    IceCreamViewModel icecream = _logicP.Read(new IceCreamBindingModel
                     {
                         Id = id })?[0];
                     int count = Convert.ToInt32(textBoxCount.Text);
-                    textBoxSum.Text = (count * product?.Price ?? 0).ToString();
+                    textBoxSum.Text = (count * icecream?.Price ?? 0).ToString();
                 }
                 catch (Exception ex)
                 {
@@ -89,11 +96,18 @@ namespace IceCreamShopView
                MessageBoxIcon.Error);
                 return;
             }
+            if (comboBoxClient.SelectedValue == null)
+            {
+                MessageBox.Show("Выберите клиента", "Ошибка", MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
+                return;
+            }
             try
             {
                 _logicO.CreateOrder(new CreateOrderBindingModel
                 {
                     IceCreamId = Convert.ToInt32(comboBoxIceCream.SelectedValue),
+                    ClientId = Convert.ToInt32(comboBoxClient.SelectedValue),
                     Count = Convert.ToInt32(textBoxCount.Text),
                     Sum = Convert.ToDecimal(textBoxSum.Text)
                 });
