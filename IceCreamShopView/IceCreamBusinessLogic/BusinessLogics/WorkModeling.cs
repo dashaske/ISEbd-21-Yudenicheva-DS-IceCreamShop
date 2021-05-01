@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.ViewModels;
+using IceCreamShopBusinessLogic.Enums;
 using IceCreamShopBusinessLogic.ViewModel;
 using System.Threading.Tasks;
 using System.Threading;
