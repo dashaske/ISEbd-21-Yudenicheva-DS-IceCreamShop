@@ -114,7 +114,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             {
                 return;
             }
-            if (info.MessageStorage == null || info.ClientStorage == null)
+            if (info.Storage == null)
             {
                 return;
             }
@@ -132,7 +132,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                             var message = client.GetMessage(i);
                             foreach (var mail in message.From.Mailboxes)
                             {
-                                info.MessageStorage.Insert(new MessageInfoBindingModel
+                                info.Storage.Insert(new MessageInfoBindingModel
                                 {
                                     DateDelivery = message.Date.DateTime,
                                     MessageId = message.MessageId,

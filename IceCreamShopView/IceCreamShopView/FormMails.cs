@@ -8,7 +8,7 @@ using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopBusinessLogic.BindingModels;
 using System.Windows.Forms;
 
-namespace SoftwareInstallingView
+namespace IceCreamShopView
 {
     public partial class FormMails : Form
     {

@@ -37,6 +37,16 @@ namespace IceCreamClientApp.Controllers
             return View(Program.Client);
         }
 
+        public IActionResult Mails()
+        {
+            if (Program.Client == null)
+            {
+                return Redirect("~/Home/Enter");
+            }
+            var model = APIClient.GetRequest<List<MessageInfoViewModel>>($"api/client/getmessages?clientId={Program.Client.Id}");
+            return View(model);
+        }
+
         [HttpPost]
         public void Privacy(string login, string password, string fio)
         {

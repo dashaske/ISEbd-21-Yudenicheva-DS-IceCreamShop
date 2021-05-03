@@ -9,7 +9,7 @@ using System.Text;
 
 namespace IceCreamShopListImplement.Imlements
 {
-    public class MessageInfoStorage
+    public class MessageInfoStorage : IMessageInfoStorage
     {
         private readonly DataListSingleton source;
 

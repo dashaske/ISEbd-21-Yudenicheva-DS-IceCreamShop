@@ -1,5 +1,5 @@
 ﻿
-namespace SoftwareInstallingView
+namespace IceCreamShopView
 {
     partial class FormMails
     {

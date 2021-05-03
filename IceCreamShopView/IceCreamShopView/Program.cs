@@ -34,7 +34,7 @@ namespace IceCreamShopView
             {
                 PopHost = ConfigurationManager.AppSettings["PopHost"],
                 PopPort = Convert.ToInt32(ConfigurationManager.AppSettings["PopPort"]),
-                MessageStorage = container.Resolve<IMessageInfoStorage>(),
+                Storage = container.Resolve<IMessageInfoStorage>(),
                 ClientStorage = container.Resolve<IClientStorage>()
             }, 0, 100000);
             Application.EnableVisualStyles();
