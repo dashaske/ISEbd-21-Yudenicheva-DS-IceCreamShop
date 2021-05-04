@@ -126,6 +126,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     {
                         client.Connect(info.PopHost, info.PopPort,
                         SecureSocketOptions.SslOnConnect);
+
                         client.Authenticate(mailLogin, mailPassword);
                         for (int i = 0; i < client.Count; i++)
                         {
