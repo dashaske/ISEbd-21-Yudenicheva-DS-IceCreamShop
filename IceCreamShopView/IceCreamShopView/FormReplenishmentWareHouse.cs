@@ -19,7 +19,7 @@ namespace IceCreamShopView
         [Dependency]
         public new IUnityContainer Container { get; set; }
 
-        public int ComponentId
+        public int IngredientId
         {
             get { return Convert.ToInt32(comboBoxIngredient.SelectedValue); }
             set { comboBoxIngredient.SelectedValue = value; }
