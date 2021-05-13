@@ -15,10 +15,10 @@ namespace IceCreamDatabaseImplement.Implements
         {
             using (var context = new IceCreamDatabase())
             {
-                return context.Orders.Select(rec => new OrderViewModel
+                return context.Orders.Include(rec => rec.IceCream).Include(rec => rec.Client).Select(rec => new OrderViewModel
                 {
                     Id = rec.Id,
-                    IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
+                    IceCreamName = rec.IceCream.IceCreamName,
                     IceCreamId = rec.IceCreamId,
                     Count = rec.Count,
                     Sum = rec.Sum,
@@ -26,7 +26,7 @@ namespace IceCreamDatabaseImplement.Implements
                     DateCreate = rec.DateCreate,
                     DateImplement = rec.DateImplement,
                     ClientId = rec.ClientId,
-                    ClientFIO = context.Clients.FirstOrDefault(x => x.Id == rec.ClientId).ClientFIO
+                    ClientFIO = rec.Client.ClientFIO
                 })
                 .ToList();
             }
@@ -48,14 +48,15 @@ namespace IceCreamDatabaseImplement.Implements
                 .Select(rec => new OrderViewModel
                 {
                     Id = rec.Id,
-                    IceCreamName = context.IceCreams.Include(x => x.Order).FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
+                    IceCreamName = rec.IceCream.IceCreamName,
                     IceCreamId = rec.IceCreamId,
                     Count = rec.Count,
                     Sum = rec.Sum,
                     Status = rec.Status,
                     DateCreate = rec.DateCreate,
                     DateImplement = rec.DateImplement,
-                    ClientId = rec.ClientId
+                    ClientId = rec.ClientId,
+                    ClientFIO = rec.Client.ClientFIO
                 })
                 .ToList();
             }
@@ -82,7 +83,8 @@ namespace IceCreamDatabaseImplement.Implements
                     Status = order.Status,
                     DateCreate = order.DateCreate,
                     DateImplement = order.DateImplement,
-                    ClientId = order.ClientId
+                    ClientId = order.ClientId,
+                    ClientFIO = order.Client.ClientFIO
                 } :
                 null;
             }
