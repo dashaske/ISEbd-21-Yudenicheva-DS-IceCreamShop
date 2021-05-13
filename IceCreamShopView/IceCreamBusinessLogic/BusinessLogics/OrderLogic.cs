@@ -34,7 +34,8 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 Count = model.Count,
                 Sum = model.Sum,
                 DateCreate = DateTime.Now,
-                Status = OrderStatus.Принят
+                Status = OrderStatus.Принят,
+                ClientId = model.ClientId
             });
         }
         public void TakeOrderInWork(ChangeStatusBindingModel model)
@@ -56,7 +57,8 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 Sum = order.Sum,
                 DateCreate = order.DateCreate,
                 DateImplement = DateTime.Now,
-                Status = OrderStatus.Выполняется
+                Status = OrderStatus.Выполняется,
+                ClientId = order.ClientId
             });
         }
         public void FinishOrder(ChangeStatusBindingModel model)
@@ -78,7 +80,8 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 Sum = order.Sum,
                 DateCreate = order.DateCreate,
                 DateImplement = order.DateImplement,
-                Status = OrderStatus.Готов
+                Status = OrderStatus.Готов,
+                ClientId = order.ClientId
             });
         }
         public void PayOrder(ChangeStatusBindingModel model)
@@ -103,7 +106,8 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 Sum = order.Sum,
                 DateCreate = order.DateCreate,
                 DateImplement = order.DateImplement,
-                Status = OrderStatus.Оплачен
+                Status = OrderStatus.Оплачен,
+                ClientId = order.ClientId
             });
         }
     }

@@ -16,18 +16,21 @@ namespace IceCreamFileImplement
         private readonly string IngredientFileName = "Ingredient.xml";
         private readonly string IceCreamFileName = "IceCream.xml";
         private readonly string OrderFileName = "Order.xml";
+        private readonly string ClientFileName = "Client.xml";
 
         public List<Ingredient> Ingredients { get; set; }
 
         public List<IceCream> IceCreams { get; set; }
 
         public List<Order> Orders { get; set; }
+        public List<Client> Clients { get; set; }
 
         private FileDataListSingleton()
         {
             Ingredients = LoadIngredients();
             IceCreams = LoadIceCreams();
             Orders = LoadOrders();
+            Clients = LoadClients();
         }
 
         public static FileDataListSingleton GetInstance()
@@ -45,6 +48,7 @@ namespace IceCreamFileImplement
             SaveIngredients();
             SaveIceCreams();
             SaveOrders();
+            SaveClients();
         }
 
         private List<Ingredient> LoadIngredients()
@@ -103,24 +107,65 @@ namespace IceCreamFileImplement
         private List<Order> LoadOrders()
         {
             var list = new List<Order>();
-
             if (File.Exists(OrderFileName))
             {
                 XDocument xDocument = XDocument.Load(OrderFileName);
-
                 var xElements = xDocument.Root.Elements("Order").ToList();
 
-                foreach (var order in xElements)
+                foreach (var elem in xElements)
                 {
+                    OrderStatus status = 0;
+                    switch (elem.Element("Status").Value)
+                    {
+                        case "Принят":
+                            status = OrderStatus.Принят;
+                            break;
+                        case "Выполняется":
+                            status = OrderStatus.Выполняется;
+                            break;
+                        case "Готов":
+                            status = OrderStatus.Готов;
+                            break;
+                        case "Оплачен":
+                            status = OrderStatus.Оплачен;
+                            break;
+                    }
+
+                    DateTime? date = null;
+                    if (elem.Element("DateImplement").Value != "")
+                    {
+                        date = Convert.ToDateTime(elem.Element("DateImplement").Value);
+                    }
                     list.Add(new Order
                     {
-                        Id = Convert.ToInt32(order.Attribute("Id").Value),
-                        IceCreamId = Convert.ToInt32(order.Element("IceCreamId").Value),
-                        Count = Convert.ToInt32(order.Element("Count").Value),
-                        Sum = Convert.ToDecimal(order.Element("Sum").Value),
-                        Status = (OrderStatus)Convert.ToInt32(order.Element("Status").Value),
-                        DateCreate = Convert.ToDateTime(order.Element("DateCreate").Value),
-                        DateImplement = !string.IsNullOrEmpty(order.Element("DateImplement").Value) ? Convert.ToDateTime(order.Element("DateImplement").Value) : (DateTime?)null
+                        Id = Convert.ToInt32(elem.Attribute("Id").Value),
+                        ClientId = Convert.ToInt32(elem.Element("ClientId").Value),
+                        IceCreamId = Convert.ToInt32(elem.Element("PackageId").Value),
+                        Count = Convert.ToInt32(elem.Element("Count").Value),
+                        Sum = Convert.ToDecimal(elem.Element("Sum").Value),
+                        Status = status,
+                        DateCreate = Convert.ToDateTime(elem.Element("DateCreate").Value),
+                        DateImplement = date
+                    });
+                }
+            }
+            return list;
+        }
+        private List<Client> LoadClients()
+        {
+            var list = new List<Client>();
+            if (File.Exists(ClientFileName))
+            {
+                XDocument xDocument = XDocument.Load(ClientFileName);
+                var xElements = xDocument.Root.Elements("Client").ToList();
+                foreach (var elem in xElements)
+                {
+                    list.Add(new Client
+                    {
+                        Id = Convert.ToInt32(elem.Attribute("Id").Value),
+                        ClientFIO = elem.Element("ClientFIO").Value,
+                        Email = elem.Element("Email").Value,
+                        Password = elem.Element("Password").Value,
                     });
                 }
             }
@@ -191,6 +236,23 @@ namespace IceCreamFileImplement
                 }
                 XDocument xDocument = new XDocument(xElement);
                 xDocument.Save(OrderFileName);
+            }
+        }
+        private void SaveClients()
+        {
+            if (Clients != null)
+            {
+                var xElement = new XElement("Clients");
+                foreach (var client in Clients)
+                {
+                    xElement.Add(new XElement("Client",
+                    new XAttribute("Id", client.Id),
+                    new XElement("ClientFIO", client.ClientFIO),
+                    new XElement("Email", client.Email),
+                    new XElement("Password", client.Password)));
+                }
+                XDocument xDocument = new XDocument(xElement);
+                xDocument.Save(ClientFileName);
             }
         }
     }

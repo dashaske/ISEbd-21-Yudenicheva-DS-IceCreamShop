@@ -8,6 +8,7 @@ namespace IceCreamDatabaseImplement.Models
     public class Order
     {
         public int Id { get; set; }
+        public int ClientId { get; set; }
 
         public int IceCreamId { get; set; }
 
@@ -25,5 +26,6 @@ namespace IceCreamDatabaseImplement.Models
 
         public DateTime? DateImplement { get; set; }
         public virtual IceCream IceCream { get; set; }
+        public virtual Client Client { get; set; }
     }
 }

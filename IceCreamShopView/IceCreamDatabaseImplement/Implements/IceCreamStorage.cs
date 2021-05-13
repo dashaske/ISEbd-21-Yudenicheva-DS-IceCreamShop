@@ -154,11 +154,11 @@ namespace IceCreamDatabaseImplement.Implements
             }
         }
 
-        private IceCream CreateModel(IceCreamBindingModel model, IceCream package)
+        private IceCream CreateModel(IceCreamBindingModel model, IceCream icecream)
         {
-            package.IceCreamName = model.IceCreamName;
-            package.Price = model.Price;
-            return package;
+            icecream.IceCreamName = model.IceCreamName;
+            icecream.Price = model.Price;
+            return icecream;
         }
 
         private IceCream CreateModel(IceCreamBindingModel model, IceCream icecream,

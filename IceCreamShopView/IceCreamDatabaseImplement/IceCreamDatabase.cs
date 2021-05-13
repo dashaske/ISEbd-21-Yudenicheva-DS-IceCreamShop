@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using IceCreamDatabaseImplement.Models;
-using System.Text;
 
 namespace IceCreamDatabaseImplement
 {
@@ -20,5 +17,6 @@ namespace IceCreamDatabaseImplement
         public virtual DbSet<IceCream> IceCreams { set; get; }
         public virtual DbSet<IceCreamIngredient> IceCreamIngredients { set; get; }
         public virtual DbSet<Order> Orders { set; get; }
+        public virtual DbSet<Client> Clients { set; get; }
     }
 }
