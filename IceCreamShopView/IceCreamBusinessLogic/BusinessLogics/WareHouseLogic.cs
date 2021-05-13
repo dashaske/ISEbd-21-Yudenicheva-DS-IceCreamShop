@@ -81,7 +81,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             }
             if (ingredient == null)
             {
-                throw new Exception("Не найден компонент");
+                throw new Exception("Не найден ингредиент");
             }
             if (wareHouse.WareHouseIngredients.ContainsKey(model.IngredientId))
             {
