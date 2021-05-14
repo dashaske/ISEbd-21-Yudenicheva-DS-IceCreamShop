@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using IceCreamShopBusinessLogic.Attributes;
 
 namespace IceCreamShopBusinessLogic.ViewModels
 {
     public class IngredientViewModel
     {
+        [Column(title: "Номер", width: 100, visible: false)]
         public int Id { get; set; }
-        [DisplayName("Название ингредиента")]
+        [Column(title: "Название ингредиента", gridViewAutoSize: GridViewAutoSize.Fill)]
         public string IngredientName { get; set; }
     }
 }

@@ -35,26 +35,22 @@ namespace IceCreamShopView
         {
             try
             {
-                dataGridViewClients.DataSource = logic.Read(null);
-                dataGridViewClients.Columns["Id"].Visible = false;
-                dataGridViewClients.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                dataGridViewClients.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                dataGridViewClients.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                Program.ConfigGrid(logic.Read(null), dataGridView);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBoxIcon.Error);
             }
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            if (dataGridViewClients.SelectedRows.Count == 1)
+            if (dataGridView.SelectedRows.Count == 1)
             {
                 if (MessageBox.Show("Удалить запись", "Вопрос", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    int id = Convert.ToInt32(dataGridViewClients.SelectedRows[0].Cells[0].Value);
+                    int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                     try
                     {
                         logic.Delete(new ClientBindingModel { Id = id });

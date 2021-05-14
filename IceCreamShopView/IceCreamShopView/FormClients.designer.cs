@@ -31,8 +31,8 @@ namespace IceCreamShopView
         {
             this.buttonDelete = new System.Windows.Forms.Button();
             this.buttonRefresh = new System.Windows.Forms.Button();
-            this.dataGridViewClients = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClients)).BeginInit();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonDelete
@@ -57,13 +57,13 @@ namespace IceCreamShopView
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
-            // dataGridViewClients
+            // dataGridView
             // 
-            this.dataGridViewClients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewClients.Location = new System.Drawing.Point(2, 4);
-            this.dataGridViewClients.Name = "dataGridViewClients";
-            this.dataGridViewClients.Size = new System.Drawing.Size(508, 426);
-            this.dataGridViewClients.TabIndex = 0;
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Location = new System.Drawing.Point(2, 4);
+            this.dataGridView.Name = "dataGridView";
+            this.dataGridView.Size = new System.Drawing.Size(508, 426);
+            this.dataGridView.TabIndex = 0;
             // 
             // FormClients
             // 
@@ -72,11 +72,11 @@ namespace IceCreamShopView
             this.ClientSize = new System.Drawing.Size(661, 442);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonDelete);
-            this.Controls.Add(this.dataGridViewClients);
+            this.Controls.Add(this.dataGridView);
             this.Name = "FormClients";
             this.Text = "Клиенты";
             this.Load += new System.EventHandler(this.FormClients_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClients)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -84,6 +84,6 @@ namespace IceCreamShopView
         #endregion
         private System.Windows.Forms.Button buttonDelete;
         private System.Windows.Forms.Button buttonRefresh;
-        private System.Windows.Forms.DataGridView dataGridViewClients;
+        private System.Windows.Forms.DataGridView dataGridView;
     }
 }
