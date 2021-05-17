@@ -1,7 +1,7 @@
 ﻿using System;
 using IceCreamShopBusinessLogic.Enums;
 
-namespace IceCreamShopBusinessLogic.BindingModel
+namespace IceCreamShopBusinessLogic.BindingModels
 {
     public class OrderBindingModel
     {

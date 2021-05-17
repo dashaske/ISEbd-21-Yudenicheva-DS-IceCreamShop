@@ -1,5 +1,5 @@
 ﻿using System;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamShopBusinessLogic.ViewModels;
 using System.Collections.Generic;
@@ -23,22 +23,20 @@ namespace IceCreamShopView
         public FormCreateOrder(IceCreamLogic logicP, OrderLogic logicO)
         {
             InitializeComponent();
-            _logicP = logicP;
-            _logicO = logicO;
+            this._logicP = logicP;
+            this._logicO = logicO;
         }
 
         private void FormCreateOrder_Load(object sender, EventArgs e)
         {
             try
             {
-                List<IceCreamViewModel> listP = _logicP.Read(null);
-                if (listP != null)
-                {
-                    comboBoxIceCream.DisplayMember = "IceCreamName";
-                    comboBoxIceCream.ValueMember = "Id";
-                    comboBoxIceCream.DataSource = listP;
-                    comboBoxIceCream.SelectedItem = null;
-                }
+                var list = _logicP.Read(null);
+               
+                comboBoxIceCream.DisplayMember = "IceCreamName";
+                comboBoxIceCream.ValueMember = "Id";
+                comboBoxIceCream.DataSource = list;
+                
             }
             catch (Exception ex)
             {

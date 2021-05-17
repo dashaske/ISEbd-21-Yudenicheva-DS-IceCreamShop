@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using System.Linq;
 using IceCreamDatabaseImplement.Models;
 using Microsoft.EntityFrameworkCore;

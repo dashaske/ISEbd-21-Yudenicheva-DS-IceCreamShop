@@ -19,30 +19,6 @@ namespace IceCreamDatabaseImplement.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("IceCreamDatabaseImplement.Models.Client", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ClientFIO")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Clients");
-                });
-
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.IceCream", b =>
                 {
                     b.Property<int>("Id")
@@ -110,9 +86,6 @@ namespace IceCreamDatabaseImplement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
@@ -133,11 +106,57 @@ namespace IceCreamDatabaseImplement.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.HasIndex("IceCreamId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DateCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResponsiblePersonFCS")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WareHouseName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WareHouses");
+                });
+
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WareHouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngredientId");
+
+                    b.HasIndex("WareHouseId");
+
+                    b.ToTable("WareHouseIngredients");
                 });
 
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.IceCreamIngredient", b =>
@@ -157,15 +176,24 @@ namespace IceCreamDatabaseImplement.Migrations
 
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.Order", b =>
                 {
-                    b.HasOne("IceCreamDatabaseImplement.Models.Client", null)
-                        .WithMany("Order")
-                        .HasForeignKey("ClientId")
+                    b.HasOne("IceCreamDatabaseImplement.Models.IceCream", "IceCream")
+                        .WithMany("Orders")
+                        .HasForeignKey("IceCreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>
+                {
+                    b.HasOne("IceCreamDatabaseImplement.Models.Ingredient", "Ingredient")
+                        .WithMany()
+                        .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IceCreamDatabaseImplement.Models.IceCream", "IceCream")
-                        .WithMany("Order")
-                        .HasForeignKey("IceCreamId")
+                    b.HasOne("IceCreamDatabaseImplement.Models.WareHouse", "WareHouse")
+                        .WithMany("WareHouseIngredients")
+                        .HasForeignKey("WareHouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

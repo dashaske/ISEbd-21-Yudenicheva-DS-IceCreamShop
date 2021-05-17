@@ -1,5 +1,5 @@
 ﻿using System;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using System.Collections.Generic;
 using System.ComponentModel;

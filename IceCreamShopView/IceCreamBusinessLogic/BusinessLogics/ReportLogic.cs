@@ -1,5 +1,6 @@
 ﻿using System;
 using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.HelperModels;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModel;
@@ -12,17 +13,17 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
 {
     public class ReportLogic
     {
-        private readonly IIngredientStorage _ingredientStorage;
-
         private readonly IIceCreamStorage _icecreamStorage;
 
         private readonly IOrderStorage _orderStorage;
 
-        public ReportLogic(IIceCreamStorage icecreamStorage, IIngredientStorage
-        ingredientStorage, IOrderStorage orderStorage)
+        private readonly IWareHouseStorage _wareHouseStorage;
+
+        public ReportLogic(IIceCreamStorage icecreamStorage, IWareHouseStorage
+        wareHouseStorage, IOrderStorage orderStorage)
         {
             _icecreamStorage = icecreamStorage;
-            _ingredientStorage = ingredientStorage;
+            _wareHouseStorage = wareHouseStorage;
             _orderStorage = orderStorage;
         }
         /// <summary>
@@ -31,7 +32,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         /// <returns></returns>
         public List<ReportIngredientIceCreamViewModel> GetIngredientIceCream()
         {
-            var ingredients = _ingredientStorage.GetFullList();
             var icecreams = _icecreamStorage.GetFullList();
             var list = new List<ReportIngredientIceCreamViewModel>();
             foreach (var icecream in icecreams)
@@ -42,14 +42,34 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     Ingredients = new List<Tuple<string, int>>(),
                     TotalCount = 0
                 };
-                foreach (var ingredient in ingredients)
+                foreach (var ingredient in icecream.IceCreamIngredients)
                 {
-                    if (icecream.IceCreamIngredients.ContainsKey(ingredient.Id))
-                    {
-                        record.Ingredients.Add(new Tuple<string, int>(ingredient.IngredientName,
-                        icecream.IceCreamIngredients[ingredient.Id].Item2));
-                        record.TotalCount += icecream.IceCreamIngredients[ingredient.Id].Item2;
-                    }
+                    record.Ingredients.Add(new Tuple<string, int>(ingredient.Value.Item1,
+                   ingredient.Value.Item2));
+                    record.TotalCount += ingredient.Value.Item2;
+                }
+                list.Add(record);
+            }
+            return list;
+        }
+        public List<ReportWareHouseIngredientsViewModel> GetWareHouseIngredient()
+        {
+            var wareHouses = _wareHouseStorage.GetFullList();
+
+            var list = new List<ReportWareHouseIngredientsViewModel>();
+
+            foreach (var wareHouse in wareHouses)
+            {
+                var record = new ReportWareHouseIngredientsViewModel
+                {
+                    WareHouseName = wareHouse.WareHouseName,
+                    Ingredients = new List<Tuple<string, int>>(),
+                    TotalCount = 0
+                };
+                foreach (var component in wareHouse.WareHouseIngredients)
+                {
+                    record.Ingredients.Add(new Tuple<string, int>(component.Value.Item1, component.Value.Item2));
+                    record.TotalCount += component.Value.Item2;
                 }
                 list.Add(record);
             }
@@ -76,6 +96,19 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 Status = ((OrderStatus)Enum.Parse(typeof(OrderStatus), x.Status.ToString())).ToString()
             })
             .ToList();
+        }
+        public List<ReportOrderByDateViewModel> GetOrdersInfo()
+        {
+            return _orderStorage.GetFullList()
+                .GroupBy(order => order.DateCreate
+                .ToShortDateString())
+                .Select(rec => new ReportOrderByDateViewModel
+                {
+                    Date = Convert.ToDateTime(rec.Key),
+                    Count = rec.Count(),
+                    Sum = rec.Sum(order => order.Sum)
+                })
+                .ToList();
         }
         /// <summary>
         /// Сохранение изделия в файл-Word
@@ -116,6 +149,33 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 DateFrom = model.DateFrom.Value,
                 DateTo = model.DateTo.Value,
                 Orders = GetOrders(model)
+            });
+        }
+        public void SaveWareHouseIngredientsToExcel(ReportBindingModel model)
+        {
+            SaveToExcel.CreateDocForWareHouse(new ExcelInfoForWareHouse
+            {
+                FileName = model.FileName,
+                Title = "Список складов",
+                WareHouseIngredients = GetWareHouseIngredient()
+            });
+        }
+        public void SaveOrdersInfoToPdfFile(ReportBindingModel model)
+        {
+            SaveToPdf.CreateDocForWareHouse(new PdfInfoForOrder
+            {
+                FileName = model.FileName,
+                Title = "Список заказов",
+                Orders = GetOrdersInfo()
+            });
+        }
+        public void SaveWareHousesToWordFile(ReportBindingModel model)
+        {
+            SaveToWord.CreateDocForWareHouse(new WordInfoForWareHouse
+            {
+                FileName = model.FileName,
+                Title = "Список складов",
+                WareHouses = _wareHouseStorage.GetFullList()
             });
         }
     }

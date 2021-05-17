@@ -1,5 +1,5 @@
 ﻿using System;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Unity;
 using Microsoft.Reporting.WebForms;
+using IceCreamShopBusinessLogic.BindingModel;
 
 namespace IceCreamShopView
 {
@@ -127,6 +128,17 @@ namespace IceCreamShopView
                 }
             }
         }
+        private void пополнениеСкладаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReplenishmentWareHouse>();
+            form.ShowDialog();
+        }
+
+        private void складыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormWareHouses>();
+            form.ShowDialog();
+        }
         private void buttonRef_Click(object sender, EventArgs e)
         {
             LoadData();
@@ -158,6 +170,41 @@ namespace IceCreamShopView
                     MessageBoxIcon.Information);
                 }
             }
+        }
+
+        private void списокСкладовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new SaveFileDialog { Filter = "docx|*.docx" })
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    report.SaveWareHousesToWordFile(new ReportBindingModel
+                    {
+                        FileName =
+                   dialog.FileName
+                    });
+                    MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void списокИнформацииОЗаказахToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReportOrdersByDate>();
+            form.ShowDialog();
+        }
+
+        private void списокИнгридиентовНаСкладахToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReportWareHouseIngredients>();
+            form.ShowDialog();
+        }
+
+        private void складыToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormWareHouses>();
+            form.ShowDialog();
         }
     }
 }
