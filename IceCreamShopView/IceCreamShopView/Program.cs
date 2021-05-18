@@ -77,6 +77,7 @@ namespace IceCreamShopView
         {
             MailLogic.MailCheck((MailCheckInfo)obj);
         }
+
         public static void ConfigGrid<T>(List<T> data, DataGridView grid)
         {
             var type = typeof(T);
