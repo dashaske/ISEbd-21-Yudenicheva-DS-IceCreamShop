@@ -262,6 +262,12 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormReplenishmentWareHouse.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormReplenishmentWareHouse.Designer.cs">
+      <DependentUpon>FormReplenishmentWareHouse.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormReportIngredientIceCream.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -273,6 +279,30 @@
     </Compile>
     <Compile Include="FormReportOrders.Designer.cs">
       <DependentUpon>FormReportOrders.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormReportOrdersByDate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormReportOrdersByDate.designer.cs">
+      <DependentUpon>FormReportOrdersByDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormReportWareHouseIngredients.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormReportWareHouseIngredients.designer.cs">
+      <DependentUpon>FormReportWareHouseIngredients.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormWareHouse.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormWareHouse.Designer.cs">
+      <DependentUpon>FormWareHouse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormWareHouses.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormWareHouses.Designer.cs">
+      <DependentUpon>FormWareHouses.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -307,11 +337,26 @@
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormReplenishmentWareHouse.resx">
+      <DependentUpon>FormReplenishmentWareHouse.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormReportIngredientIceCream.resx">
       <DependentUpon>FormReportIngredientIceCream.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormReportOrders.resx">
       <DependentUpon>FormReportOrders.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormReportOrdersByDate.resx">
+      <DependentUpon>FormReportOrdersByDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormReportWareHouseIngredients.resx">
+      <DependentUpon>FormReportWareHouseIngredients.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormWareHouse.resx">
+      <DependentUpon>FormWareHouse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormWareHouses.resx">
+      <DependentUpon>FormWareHouses.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -323,6 +368,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Report.rdlc" />
+    <EmbeddedResource Include="ReportOrders.rdlc" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\FormCreateOrder.datasource" />
     <None Include="Properties\DataSources\FormIceCream.datasource" />
@@ -331,8 +377,13 @@
     <None Include="Properties\DataSources\FormIngredientIce.datasource" />
     <None Include="Properties\DataSources\FormIngredients.datasource" />
     <None Include="Properties\DataSources\FormMain.datasource" />
+    <None Include="Properties\DataSources\FormReplenishmentWareHouse.datasource" />
     <None Include="Properties\DataSources\FormReportIngredientIceCream.datasource" />
     <None Include="Properties\DataSources\FormReportOrders.datasource" />
+    <None Include="Properties\DataSources\FormReportOrdersByDate.datasource" />
+    <None Include="Properties\DataSources\FormReportWareHouseIngredients.datasource" />
+    <None Include="Properties\DataSources\FormWareHouse.datasource" />
+    <None Include="Properties\DataSources\FormWareHouses.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.ChangeStatusBindingModel.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.CreateOrderBindingModel.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.BindingModel.IceCreamBindingModel.datasource" />
@@ -347,7 +398,10 @@
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.Interfaces.IIngredientStorage.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.Interfaces.IOrderStorage.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportIngredientIceCreamViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportOrderByDateViewModel.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportOrdersViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportWareHouseIngredientsViewModel.datasource" />
+    <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModel.ReportWareHouseViewModel.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModels.IceCreamViewModel.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModels.IngredientViewModel.datasource" />
     <None Include="Properties\DataSources\IceCreamShopBusinessLogic.ViewModels.OrderViewModel.datasource" />

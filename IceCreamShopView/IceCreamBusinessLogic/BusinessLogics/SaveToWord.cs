@@ -17,36 +17,168 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         public static void CreateDoc(WordInfo info)
         {
             using (WordprocessingDocument wordDocument =
-            WordprocessingDocument.Create(info.FileName, WordprocessingDocumentType.Document))
+                WordprocessingDocument.Create(info.FileName, WordprocessingDocumentType.Document))
             {
                 MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
-                mainPart.Document = new Document();
+                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
                 Body docBody = mainPart.Document.AppendChild(new Body());
+
                 docBody.AppendChild(CreateParagraph(new WordParagraph
                 {
-                    Texts = new List<(string, WordTextProperties)> { (info.Title, new WordTextProperties { Bold = true, Size = "24", }) },
-                    TextProperties = new WordTextProperties
+                    Texts = new List<(string, WordParagraphProperties)> { (info.Title,
+                    new WordParagraphProperties
+                    {
+                        Bold = true,
+                        Size = "24", }
+                    ) },
+                    TextProperties = new WordParagraphProperties
                     {
                         Size = "24",
                         JustificationValues = JustificationValues.Center
                     }
                 }));
 
-                foreach (var icecream in info.IceCreams)
+                foreach (var secure in info.IceCreams)
                 {
                     docBody.AppendChild(CreateParagraph(new WordParagraph
                     {
-                        Texts = new List<(string, WordTextProperties)> {
-                    (icecream.IceCreamName + " : ", new WordTextProperties {Bold = true, Size = "24", }),
-                        (icecream.Price.ToString(), new WordTextProperties {Bold = false, Size = "24", }) },
-                        TextProperties = new WordTextProperties
+                        Texts = new List<(string, WordParagraphProperties)> {(
+                        secure.IceCreamName + " ",
+                        new WordParagraphProperties
+                        {
+                            Size = "24",
+                            Bold =true
+                        }
+                        ),
+                        (
+                        secure.Price.ToString(),
+                        new WordParagraphProperties
+                        {
+                            Size = "24",
+                        }
+                        ) },
+
+                        TextProperties = new WordParagraphProperties
                         {
                             Size = "24",
                             JustificationValues = JustificationValues.Both
                         }
-                    })); ;
+                    }));
                 }
                 docBody.AppendChild(CreateSectionProperties());
+
+                wordDocument.MainDocumentPart.Document.Save();
+            }
+        }
+
+        public static void CreateDocForWareHouse(WordInfoForWareHouse info)
+        {
+            using (WordprocessingDocument wordDocument = WordprocessingDocument
+                .Create(info.FileName, WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new Document();
+                Body docBody = mainPart.Document.AppendChild(new Body());
+
+                Table table = new Table();
+                TableProperties tblProp = new TableProperties(
+                    new TableBorders(
+                        new TopBorder
+                        {
+                            Val = new EnumValue<BorderValues>(BorderValues.Single),
+                            Size = 14
+                        },
+                        new BottomBorder
+                        {
+                            Val = new EnumValue<BorderValues>(BorderValues.Single),
+                            Size = 14
+                        },
+                        new LeftBorder
+                        {
+                            Val = new EnumValue<BorderValues>(BorderValues.Single),
+                            Size = 14
+                        },
+                        new RightBorder
+                        {
+                            Val = new EnumValue<BorderValues>(BorderValues.Single),
+                            Size = 14
+                        },
+                        new InsideHorizontalBorder
+                        {
+                            Val = new EnumValue<BorderValues>(BorderValues.Single),
+                            Size = 10
+                        },
+                        new InsideVerticalBorder
+                        {
+                            Val = new EnumValue<BorderValues>(BorderValues.Single),
+                            Size = 12
+                        }
+                    )
+                );
+
+                table.AppendChild(tblProp);
+
+                docBody.AppendChild(CreateParagraph(new WordParagraph
+                {
+                    Texts = new List<(string, WordParagraphProperties)> { (info.Title, new
+                        WordParagraphProperties {Bold = true, Size = "24", } ) },
+                    TextProperties = new WordParagraphProperties
+                    {
+                        Size = "24",
+                        JustificationValues = JustificationValues.Center
+                    }
+                }));
+
+                TableRow tableRowHeader = new TableRow();
+
+                TableCell cellHeaderName = new TableCell();
+                cellHeaderName.Append(new TableCellProperties(
+                    new TableCellWidth() { Type = TableWidthUnitValues.Dxa, Width = "2400" }));
+                cellHeaderName.Append(new Paragraph(new Run(new Text("Название"))));
+
+                TableCell cellHeaderPerson = new TableCell();
+                cellHeaderPerson.Append(new TableCellProperties(
+                    new TableCellWidth() { Type = TableWidthUnitValues.Dxa, Width = "2400" }));
+                cellHeaderPerson.Append(new Paragraph(new Run(new Text("ФИО ответственного"))));
+
+                TableCell cellHeaderDateCreate = new TableCell();
+                cellHeaderDateCreate.Append(new TableCellProperties(
+                    new TableCellWidth() { Type = TableWidthUnitValues.Dxa, Width = "2400" }));
+                cellHeaderDateCreate.Append(new Paragraph(new Run(new Text("Дата создания"))));
+
+                tableRowHeader.Append(cellHeaderName);
+                tableRowHeader.Append(cellHeaderPerson);
+                tableRowHeader.Append(cellHeaderDateCreate);
+
+                table.Append(tableRowHeader);
+
+                foreach (var warehouse in info.WareHouses)
+                {
+                    TableRow tableRow = new TableRow();
+
+                    TableCell cellName = new TableCell();
+                    cellName.Append(new TableCellProperties(
+                        new TableCellWidth() { Type = TableWidthUnitValues.Dxa, Width = "2400" }));
+                    cellName.Append(new Paragraph(new Run(new Text(warehouse.WareHouseName))));
+
+                    TableCell cellPerson = new TableCell();
+                    cellPerson.Append(new TableCellProperties(
+                        new TableCellWidth() { Type = TableWidthUnitValues.Dxa, Width = "2400" }));
+                    cellPerson.Append(new Paragraph(new Run(new Text(warehouse.ResponsiblePersonFCS))));
+
+                    TableCell cellDateCreate = new TableCell();
+                    cellDateCreate.Append(new TableCellProperties(
+                        new TableCellWidth() { Type = TableWidthUnitValues.Dxa, Width = "2400" }));
+                    cellDateCreate.Append(new Paragraph(new Run(new Text(warehouse.DateCreate.ToString()))));
+
+                    tableRow.Append(cellName);
+                    tableRow.Append(cellPerson);
+                    tableRow.Append(cellDateCreate);
+
+                    table.Append(tableRow);
+                }
+
+                docBody.AppendChild(table);
                 wordDocument.MainDocumentPart.Document.Save();
             }
         }
@@ -102,22 +234,26 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         /// </summary>
         /// <param name="paragraphProperties"></param>
         /// <returns></returns>
-        private static ParagraphProperties CreateParagraphProperties(WordTextProperties paragraphProperties)
+        private static ParagraphProperties CreateParagraphProperties(WordParagraphProperties paragraphProperties)
         {
             if (paragraphProperties != null)
             {
                 ParagraphProperties properties = new ParagraphProperties();
+
                 properties.AppendChild(new Justification()
                 {
                     Val = paragraphProperties.JustificationValues
                 });
+
                 properties.AppendChild(new SpacingBetweenLines
                 {
                     LineRule = LineSpacingRuleValues.Auto
                 });
-                properties.AppendChild(new Indentation());
-                ParagraphMarkRunProperties paragraphMarkRunProperties = new
-                ParagraphMarkRunProperties();
+
+                properties.Append(new Indentation());
+
+                ParagraphMarkRunProperties paragraphMarkRunProperties =
+                    new ParagraphMarkRunProperties();
                 if (!string.IsNullOrEmpty(paragraphProperties.Size))
                 {
                     paragraphMarkRunProperties.AppendChild(new FontSize
@@ -126,6 +262,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     });
                 }
                 properties.AppendChild(paragraphMarkRunProperties);
+
                 return properties;
             }
             return null;

@@ -50,6 +50,21 @@ namespace IceCreamDatabaseImplement.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WareHouses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WareHouseName = table.Column<string>(nullable: false),
+                    ResponsiblePersonFCS = table.Column<string>(nullable: false),
+                    DateCreate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WareHouses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -107,6 +122,33 @@ namespace IceCreamDatabaseImplement.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WareHouseIngredients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WareHouseId = table.Column<int>(nullable: false),
+                    IngredientId = table.Column<int>(nullable: false),
+                    Count = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WareHouseIngredients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WareHouseIngredients_Ingredients_IngredientId",
+                        column: x => x.IngredientId,
+                        principalTable: "Ingredients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_WareHouseIngredients_WareHouses_WareHouseId",
+                        column: x => x.WareHouseId,
+                        principalTable: "WareHouses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_IceCreamIngredients_IceCreamId",
                 table: "IceCreamIngredients",
@@ -126,6 +168,16 @@ namespace IceCreamDatabaseImplement.Migrations
                 name: "IX_Orders_IceCreamId",
                 table: "Orders",
                 column: "IceCreamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WareHouseIngredients_IngredientId",
+                table: "WareHouseIngredients",
+                column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WareHouseIngredients_WareHouseId",
+                table: "WareHouseIngredients",
+                column: "WareHouseId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -137,13 +189,19 @@ namespace IceCreamDatabaseImplement.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "WareHouseIngredients");
 
             migrationBuilder.DropTable(
                 name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "IceCreams");
+
+            migrationBuilder.DropTable(
+                name: "Ingredients");
+
+            migrationBuilder.DropTable(
+                name: "WareHouses");
         }
     }
 }

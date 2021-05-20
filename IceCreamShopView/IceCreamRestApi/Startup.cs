@@ -31,9 +31,13 @@ namespace IceCreamRestApi
             services.AddTransient<IClientStorage, ClientStorage>();
             services.AddTransient<IOrderStorage, OrderStorage>();
             services.AddTransient<IIceCreamStorage, IceCreamStorage>();
+            services.AddTransient<IIngredientStorage, IngredientStorage>();
+            services.AddTransient<IWareHouseStorage, WareHouseStorage>();
             services.AddTransient<OrderLogic>();
             services.AddTransient<ClientLogic>();
             services.AddTransient<IceCreamLogic>();
+            services.AddTransient<WareHouseLogic>();
+            services.AddTransient<IngredientLogic>();
             services.AddControllers().AddNewtonsoftJson();
         }
 

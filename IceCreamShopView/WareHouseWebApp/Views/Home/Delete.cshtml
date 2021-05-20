@@ -1,0 +1,47 @@
+﻿@model IceCreamShopBusinessLogic.ViewModels.WareHouseViewModel
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class="text-center">
+    <h2 class="display-4">Вы действительно хотите удалить склад?</h2>
+</div>
+<form method="post">
+    <div class="row">
+        <div class="col-4">Название склада: @Model.WareHouseName</div>
+    </div>
+    <div class="row">
+        <div class="col-4">ФИО ответственного: @Model.ResponsiblePersonFCS</div>
+    </div>
+    <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4">
+            <input type="submit" value="Удалить" class="btn btn-danger" />
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Компонент
+                </th>
+                <th>
+                    Количество
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.WareHouseIngredients)
+            {
+                <tr>
+                    <td>
+                        @item.Value.Item1
+                    </td>
+                    <td>
+                        @item.Value.Item2
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

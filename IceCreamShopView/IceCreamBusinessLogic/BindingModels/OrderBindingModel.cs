@@ -2,7 +2,7 @@
 using IceCreamShopBusinessLogic.Enums;
 using System.Runtime.Serialization;
 
-namespace IceCreamShopBusinessLogic.BindingModel
+namespace IceCreamShopBusinessLogic.BindingModels
 {
     [DataContract]
     public class OrderBindingModel
