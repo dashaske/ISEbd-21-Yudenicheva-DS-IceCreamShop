@@ -19,6 +19,7 @@ namespace IceCreamFileImplement
         private readonly string OrderFileName = "Order.xml";
         private readonly string ClientFileName = "Client.xml";
         private readonly string ImplementerFileName = "Implementer.xml";
+        private readonly string WareHouseFileName = "WareHouse.xml";
 
         public List<Ingredient> Ingredients { get; set; }
 
@@ -29,6 +30,7 @@ namespace IceCreamFileImplement
         public List<Client> Clients { get; set; }
 
         public List<Implementer> Implementers { get; set; }
+        public List<WareHouse> WareHouses { get; set; }
 
         private FileDataListSingleton()
         {
@@ -37,6 +39,7 @@ namespace IceCreamFileImplement
             Orders = LoadOrders();
             Clients = LoadClients();
             Implementers = LoadImplementers();
+            WareHouses = LoadWareHouses();
         }
 
         public static FileDataListSingleton GetInstance()
@@ -56,6 +59,7 @@ namespace IceCreamFileImplement
             SaveOrders();
             SaveClients();
             SaveImplementers();
+            SaveWareHouses();
         }
 
         private List<Ingredient> LoadIngredients()
@@ -121,38 +125,18 @@ namespace IceCreamFileImplement
 
                 foreach (var elem in xElements)
                 {
-                    OrderStatus status = 0;
-                    switch (elem.Element("Status").Value)
-                    {
-                        case "Принят":
-                            status = OrderStatus.Принят;
-                            break;
-                        case "Выполняется":
-                            status = OrderStatus.Выполняется;
-                            break;
-                        case "Готов":
-                            status = OrderStatus.Готов;
-                            break;
-                        case "Оплачен":
-                            status = OrderStatus.Оплачен;
-                            break;
-                    }
-
-                    DateTime? date = null;
-                    if (elem.Element("DateImplement").Value != "")
-                    {
-                        date = Convert.ToDateTime(elem.Element("DateImplement").Value);
-                    }
                     list.Add(new Order
                     {
                         Id = Convert.ToInt32(elem.Attribute("Id").Value),
                         ClientId = Convert.ToInt32(elem.Element("ClientId").Value),
-                        IceCreamId = Convert.ToInt32(elem.Element("PackageId").Value),
+                        IceCreamId = Convert.ToInt32(elem.Element("IceCreamId").Value),
+                        ImplementerId = Convert.ToInt32(elem.Element("ImplementerId").Value),
                         Count = Convert.ToInt32(elem.Element("Count").Value),
                         Sum = Convert.ToDecimal(elem.Element("Sum").Value),
-                        Status = status,
+                        Status = (OrderStatus)Convert.ToInt32(elem.Element("Status").Value),
                         DateCreate = Convert.ToDateTime(elem.Element("DateCreate").Value),
-                        DateImplement = date
+                        DateImplement = !string.IsNullOrEmpty(elem.Element("DateImplement").Value) ?
+                            Convert.ToDateTime(elem.Element("DateImplement").Value) : DateTime.MinValue
                     });
                 }
             }
@@ -194,6 +178,36 @@ namespace IceCreamFileImplement
                         ImplementerFIO = elem.Element("ImplementerFIO").Value,
                         WorkingTime = Convert.ToInt32(elem.Element("WorkingTime").Value),
                         PauseTime = Convert.ToInt32(elem.Element("PauseTime").Value),
+                    });
+                }
+            }
+            return list;
+        }
+        private List<WareHouse> LoadWareHouses()
+        {
+            var list = new List<WareHouse>();
+
+            if (File.Exists(WareHouseFileName))
+            {
+                XDocument xDocument = XDocument.Load(WareHouseFileName);
+
+                var xElements = xDocument.Root.Elements("WareHouse").ToList();
+
+                foreach (var elem in xElements)
+                {
+                    var wareHouseIngredients = new Dictionary<int, int>();
+                    foreach (var ingredient in elem.Element("WareHouseIngredients").Elements("WareHouseIngredients").ToList())
+                    {
+                        wareHouseIngredients.Add(Convert.ToInt32(ingredient.Element("Key").Value),
+                            Convert.ToInt32(ingredient.Element("Value").Value));
+                    }
+                    list.Add(new WareHouse
+                    {
+                        Id = Convert.ToInt32(elem.Attribute("Id").Value),
+                        WareHouseName = elem.Element("WareHouseName").Value,
+                        ResponsiblePersonFCS = elem.Element("ResponsiblePersonFCS").Value,
+                        WareHouseIngredients = wareHouseIngredients,
+                        DateCreate = Convert.ToDateTime(elem.Element("DateCreate").Value)
                     });
                 }
             }
@@ -299,6 +313,32 @@ namespace IceCreamFileImplement
                 }
                 XDocument xDocument = new XDocument(xElement);
                 xDocument.Save(ImplementerFileName);
+            }
+        }
+        private void SaveWareHouses()
+        {
+            if (WareHouses != null)
+            {
+                var xElement = new XElement("WareHouses");
+
+                foreach (var wareHouse in WareHouses)
+                {
+                    var compElement = new XElement("WareHouseIngredients");
+                    foreach (var component in wareHouse.WareHouseIngredients)
+                    {
+                        compElement.Add(new XElement("WareHouseIngredient",
+                            new XElement("Key", component.Key),
+                            new XElement("Value", component.Value)));
+                    }
+                    xElement.Add(new XElement("WareHouse",
+                        new XAttribute("Id", wareHouse.Id),
+                        new XElement("WareHouseName", wareHouse.WareHouseName),
+                        new XElement("ResponsiblePersonFCS", wareHouse.ResponsiblePersonFCS),
+                        new XElement("DateCreate", wareHouse.DateCreate),
+                        compElement));
+                }
+                XDocument xDocument = new XDocument(xElement);
+                xDocument.Save(WareHouseFileName);
             }
         }
     }

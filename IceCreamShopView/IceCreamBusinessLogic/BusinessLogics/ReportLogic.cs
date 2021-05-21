@@ -1,5 +1,6 @@
 ﻿using System;
 using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.HelperModels;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModel;
@@ -12,18 +13,19 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
 {
     public class ReportLogic
     {
-        private readonly IIngredientStorage _ingredientStorage;
 
         private readonly IIceCreamStorage _icecreamStorage;
 
         private readonly IOrderStorage _orderStorage;
 
-        public ReportLogic(IIceCreamStorage icecreamStorage, IIngredientStorage
-        ingredientStorage, IOrderStorage orderStorage)
+        private readonly IWareHouseStorage _wareHouseStorage;
+
+        public ReportLogic(IIceCreamStorage icecreamStorage, IWareHouseStorage
+        wareHouseStorage, IOrderStorage orderStorage)
         {
             _icecreamStorage = icecreamStorage;
-            _ingredientStorage = ingredientStorage;
             _orderStorage = orderStorage;
+            _wareHouseStorage = wareHouseStorage;
         }
         /// <summary>
         /// Получение списка компонент с указанием, в каких изделиях используются
@@ -31,7 +33,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         /// <returns></returns>
         public List<ReportIngredientIceCreamViewModel> GetIngredientIceCream()
         {
-            var ingredients = _ingredientStorage.GetFullList();
             var icecreams = _icecreamStorage.GetFullList();
             var list = new List<ReportIngredientIceCreamViewModel>();
             foreach (var icecream in icecreams)
@@ -51,11 +52,29 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             }
             return list;
         }
-        /// <summary>
-        /// Получение списка заказов за определенный период
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        public List<ReportWareHouseIngredientsViewModel> GetWareHouseIngredient()
+        {
+            var storeHouses = _wareHouseStorage.GetFullList();
+
+            var list = new List<ReportWareHouseIngredientsViewModel>();
+
+            foreach (var storeHouse in storeHouses)
+            {
+                var record = new ReportWareHouseIngredientsViewModel
+                {
+                    WareHouseName = storeHouse.WareHouseName,
+                    Ingredients = new List<Tuple<string, int>>(),
+                    TotalCount = 0
+                };
+                foreach (var ingredient in storeHouse.WareHouseIngredients)
+                {
+                    record.Ingredients.Add(new Tuple<string, int>(ingredient.Value.Item1, ingredient.Value.Item2));
+                    record.TotalCount += ingredient.Value.Item2;
+                }
+                list.Add(record);
+            }
+            return list;
+        }
         public List<ReportOrdersViewModel> GetOrders(ReportBindingModel model)
         {
             return _orderStorage.GetFilteredList(new OrderBindingModel
@@ -73,10 +92,19 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             })
             .ToList();
         }
-        /// <summary>
-        /// Сохранение изделия в файл-Word
-        /// </summary>
-        /// <param name="model"></param>
+        public List<ReportOrderByDateViewModel> GetOrdersInfo()
+        {
+            return _orderStorage.GetFullList()
+                .GroupBy(order => order.DateCreate
+                .ToShortDateString())
+                .Select(rec => new ReportOrderByDateViewModel
+                {
+                    Date = Convert.ToDateTime(rec.Key),
+                    Count = rec.Count(),
+                    Sum = rec.Sum(order => order.Sum)
+                })
+                .ToList();
+        }
         public void SaveIceCreamsToWordFile(ReportBindingModel model)
         {
             SaveToWord.CreateDoc(new WordInfo
@@ -86,10 +114,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 IceCreams = _icecreamStorage.GetFullList()
             });
         }
-        /// <summary>
-        /// Сохранение компонент с указаеним продуктов в файл-Excel
-        /// </summary>
-        /// <param name="model"></param>
         public void SaveIngredientIceCreamToExcelFile(ReportBindingModel model)
         {
             SaveToExcel.CreateDoc(new ExcelInfo
@@ -99,10 +123,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 IngredientIceCreams = GetIngredientIceCream()
             });
         }
-        /// <summary>
-        /// Сохранение заказов в файл-Pdf
-        /// </summary>
-        /// <param name="model"></param>
         public void SaveOrdersToPdfFile(ReportBindingModel model)
         {
             SaveToPdf.CreateDoc(new PdfInfo
@@ -112,6 +132,35 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 DateFrom = model.DateFrom.Value,
                 DateTo = model.DateTo.Value,
                 Orders = GetOrders(model)
+            });
+        }
+        public void SaveWareHouseIngredientsToExcel(ReportBindingModel model)
+        {
+            SaveToExcel.CreateDocForWareHouse(new ExcelInfoForWareHouse
+            {
+                FileName = model.FileName,
+                Title = "Список складов",
+                WareHouseIngredients = GetWareHouseIngredient()
+            });
+        }
+
+        public void SaveOrdersInfoToPdfFile(ReportBindingModel model)
+        {
+            SaveToPdf.CreateDocForWareHouse(new PdfInfoForOrder
+            {
+                FileName = model.FileName,
+                Title = "Список заказов",
+                Orders = GetOrdersInfo()
+            });
+        }
+
+        public void SaveWareHousesToWordFile(ReportBindingModel model)
+        {
+            SaveToWord.CreateDocForWareHouse(new WordInfoForWareHouse
+            {
+                FileName = model.FileName,
+                Title = "Список складов",
+                WareHouses = _wareHouseStorage.GetFullList()
             });
         }
     }

@@ -119,12 +119,11 @@ namespace IceCreamShopListImplement.Imlements
             {
                 return null;
             }
-            foreach (var ingredient in source.Orders)
+            foreach (var order in source.Orders)
             {
-                if (ingredient.Id == model.Id || ingredient.IceCreamId ==
-               model.IceCreamId)
+                if (order.Id == model.Id)
                 {
-                    return CreateModel(ingredient);
+                    return CreateModel(order);
                 }
             }
             return null;
