@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.Enums;
 using System.Linq;

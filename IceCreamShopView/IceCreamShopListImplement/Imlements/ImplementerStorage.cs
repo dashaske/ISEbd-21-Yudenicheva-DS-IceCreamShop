@@ -51,7 +51,7 @@ namespace IceCreamShopListImplement.Imlements
             }
             foreach (var implementer in source.Implementers)
             {
-                if (implementer.Id == model.Id)
+                if (implementer.Id == model.Id || implementer.ImplementerFIO == model.ImplementerFIO)
                 {
                     return CreateModel(implementer);
                 }
@@ -74,19 +74,14 @@ namespace IceCreamShopListImplement.Imlements
 
         public void Update(ImplementerBindingModel model)
         {
-            Implementer tempImplementer = null;
-            foreach (var client in source.Implementers)
+            foreach (var implementer in source.Implementers)
             {
-                if (client.Id == model.Id)
+                if (implementer.Id == model.Id)
                 {
-                    tempImplementer = client;
+                    CreateModel(model, implementer);
                 }
             }
-            if (tempImplementer == null)
-            {
-                throw new Exception("Элемент не найден");
-            }
-            CreateModel(model, tempImplementer);
+            throw new Exception("Исполнитель не найден");
         }
 
         public void Delete(ImplementerBindingModel model)

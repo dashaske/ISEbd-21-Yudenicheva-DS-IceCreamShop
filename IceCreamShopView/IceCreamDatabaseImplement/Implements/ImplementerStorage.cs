@@ -55,17 +55,9 @@ namespace IceCreamDatabaseImplement.Implements
             }
             using (var context = new IceCreamDatabase())
             {
-                var implementer = context.Implementers.Include(x => x.Order)
-                .FirstOrDefault(rec => rec.Id == model.Id);
-                return implementer != null ?
-                new ImplementerViewModel
-                {
-                    Id = implementer.Id,
-                    ImplementerFIO = implementer.ImplementerFIO,
-                    WorkingTime = implementer.WorkingTime,
-                    PauseTime = implementer.PauseTime
-                } :
-                null;
+                var implementer = context.Implementers.FirstOrDefault(rec => rec.Id == model.Id ||
+                    rec.ImplementerFIO == model.ImplementerFIO);
+                return implementer != null ? CreateModel(implementer) : null;
             }
         }
 
@@ -115,6 +107,16 @@ namespace IceCreamDatabaseImplement.Implements
             implementer.WorkingTime = model.WorkingTime;
             implementer.PauseTime = model.PauseTime;
             return implementer;
+        }
+        private ImplementerViewModel CreateModel(Implementer implementer)
+        {
+            return new ImplementerViewModel
+            {
+                Id = implementer.Id,
+                ImplementerFIO = implementer.ImplementerFIO,
+                WorkingTime = implementer.WorkingTime,
+                PauseTime = implementer.PauseTime
+            };
         }
     }
 }

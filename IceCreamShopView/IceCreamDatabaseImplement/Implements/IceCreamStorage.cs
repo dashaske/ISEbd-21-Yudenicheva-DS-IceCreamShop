@@ -1,7 +1,7 @@
 ﻿using System;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
@@ -12,24 +12,69 @@ namespace IceCreamDatabaseImplement.Implements
 {
     public class IceCreamStorage : IIceCreamStorage
     {
+        private IceCream CreateModel(IceCreamBindingModel model, IceCream iceCream, IceCreamDatabase context)
+        {
+            iceCream.IceCreamName = model.IceCreamName;
+            iceCream.Price = model.Price;
+            if (iceCream.Id == 0)
+            {
+                context.IceCreams.Add(iceCream);
+                context.SaveChanges();
+            }
+
+            if (model.Id.HasValue)
+            {
+                var IceCreamIngredients = context.IceCreamIngredients
+                    .Where(rec => rec.IceCreamId == model.Id.Value)
+                    .ToList();
+
+                context.IceCreamIngredients.RemoveRange(IceCreamIngredients
+                    .Where(rec => !model.IceCreamIngredients.ContainsKey(rec.IngredientId))
+                    .ToList());
+                context.SaveChanges();
+
+                foreach (var updateIngredient in IceCreamIngredients)
+                {
+                    updateIngredient.Count = model.IceCreamIngredients[updateIngredient.IngredientId].Item2;
+                    model.IceCreamIngredients.Remove(updateIngredient.IngredientId);
+                }
+                context.SaveChanges();
+            }
+
+
+            foreach (var IceCreamIngredient in model.IceCreamIngredients)
+            {
+                context.IceCreamIngredients.Add(new IceCreamIngredient
+                {
+                    IceCreamId = iceCream.Id,
+                    IngredientId = IceCreamIngredient.Key,
+                    Count = IceCreamIngredient.Value.Item2
+                });
+                context.SaveChanges();
+            }
+
+            return iceCream;
+        }
+
         public List<IceCreamViewModel> GetFullList()
         {
             using (var context = new IceCreamDatabase())
             {
                 return context.IceCreams
-                .Include(rec => rec.IceCreamIngredients)
-                .ThenInclude(rec => rec.Ingredient)
-                .ToList()
-                .Select(rec => new IceCreamViewModel
-                {
-                    Id = rec.Id,
-                    IceCreamName = rec.IceCreamName,
-                    Price = rec.Price,
-                    IceCreamIngredients = rec.IceCreamIngredients
-                .ToDictionary(recPC => recPC.IngredientId, recPC =>
-                (recPC.IceCream?.IceCreamName, recPC.Count))
-                })
-                .ToList();
+                    .Include(rec => rec.IceCreamIngredients)
+                    .ThenInclude(rec => rec.Ingredient)
+                    .ToList()
+                    .Select(rec => new IceCreamViewModel
+                    {
+                        Id = rec.Id,
+                        IceCreamName = rec.IceCreamName,
+                        Price = rec.Price,
+                        IceCreamIngredients = rec.IceCreamIngredients
+                            .ToDictionary(recIceCreamIngredients => recIceCreamIngredients.IngredientId,
+                            recIceCreamIngredients => (recIceCreamIngredients.Ingredient?.IngredientName,
+                            recIceCreamIngredients.Count))
+                    })
+                    .ToList();
             }
         }
 
@@ -39,23 +84,25 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 return null;
             }
+
             using (var context = new IceCreamDatabase())
             {
                 return context.IceCreams
-                .Include(rec => rec.IceCreamIngredients)
-                .ThenInclude(rec => rec.Ingredient)
-                .Where(rec => rec.IceCreamName.Contains(model.IceCreamName))
-                .ToList()
-                .Select(rec => new IceCreamViewModel
-                {
-                    Id = rec.Id,
-                    IceCreamName = rec.IceCreamName,
-                    Price = rec.Price,
-                    IceCreamIngredients = rec.IceCreamIngredients
-                .ToDictionary(recPC => recPC.IngredientId, recPC =>
-                (recPC.IceCream?.IceCreamName, recPC.Count))
-                })
-                .ToList();
+                    .Include(rec => rec.IceCreamIngredients)
+                    .ThenInclude(rec => rec.Ingredient)
+                    .Where(rec => rec.IceCreamName.Contains(model.IceCreamName))
+                    .ToList()
+                    .Select(rec => new IceCreamViewModel
+                    {
+                        Id = rec.Id,
+                        IceCreamName = rec.IceCreamName,
+                        Price = rec.Price,
+                        IceCreamIngredients = rec.IceCreamIngredients
+                            .ToDictionary(recIceCreamIngredient => recIceCreamIngredient.IngredientId,
+                            recIceCreamIngredient => (recIceCreamIngredient.Ingredient?.IngredientName,
+                            recIceCreamIngredient.Count))
+                    })
+                    .ToList();
             }
         }
 
@@ -65,23 +112,27 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 return null;
             }
+
             using (var context = new IceCreamDatabase())
             {
-                var ingredient = context.IceCreams
-                .Include(rec => rec.IceCreamIngredients)
-                .ThenInclude(rec => rec.Ingredient)
-                .FirstOrDefault(rec => rec.IceCreamName.Equals(model.IceCreamName) || rec.Id
-                == model.Id);
-                return ingredient != null ?
-                new IceCreamViewModel
-                {
-                    Id = ingredient.Id,
-                    IceCreamName = ingredient.IceCreamName,
-                    Price = ingredient.Price,
-                    IceCreamIngredients = ingredient.IceCreamIngredients
-                .ToDictionary(recPC => recPC.IngredientId, recPC =>
-                (recPC.IceCream?.IceCreamName, recPC.Count))
-                } : null;
+                var IceCream = context.IceCreams
+                    .Include(rec => rec.IceCreamIngredients)
+                    .ThenInclude(rec => rec.Ingredient)
+                    .FirstOrDefault(rec => rec.IceCreamName == model.IceCreamName ||
+                    rec.Id == model.Id);
+
+                return IceCream != null ?
+                    new IceCreamViewModel
+                    {
+                        Id = IceCream.Id,
+                        IceCreamName = IceCream.IceCreamName,
+                        Price = IceCream.Price,
+                        IceCreamIngredients = IceCream.IceCreamIngredients
+                            .ToDictionary(recIceCreamIngredient => recIceCreamIngredient.IngredientId,
+                            recIceCreamIngredient => (recIceCreamIngredient.Ingredient?.IngredientName,
+                            recIceCreamIngredient.Count))
+                    } :
+                    null;
             }
         }
 
@@ -93,10 +144,8 @@ namespace IceCreamDatabaseImplement.Implements
                 {
                     try
                     {
-                        IceCream icecream = CreateModel(model, new IceCream());
-                        context.IceCreams.Add(icecream);
+                        CreateModel(model, new IceCream(), context);
                         context.SaveChanges();
-                        icecream = CreateModel(model, icecream, context);
 
                         transaction.Commit();
                     }
@@ -117,14 +166,16 @@ namespace IceCreamDatabaseImplement.Implements
                 {
                     try
                     {
-                        var element = context.IceCreams.FirstOrDefault(rec => rec.Id ==
-                        model.Id);
-                        if (element == null)
+                        var secure = context.IceCreams.FirstOrDefault(rec => rec.Id == model.Id);
+
+                        if (secure == null)
                         {
-                            throw new Exception("Элемент не найден");
+                            throw new Exception("Продукт не найден");
                         }
-                        CreateModel(model, element, context);
+
+                        context.IceCreams.Add(CreateModel(model, new IceCream(), context));
                         context.SaveChanges();
+
                         transaction.Commit();
                     }
                     catch
@@ -140,58 +191,16 @@ namespace IceCreamDatabaseImplement.Implements
         {
             using (var context = new IceCreamDatabase())
             {
-                IceCream element = context.IceCreams.FirstOrDefault(rec => rec.Id ==
-                model.Id);
-                if (element != null)
-                {
-                    context.IceCreams.Remove(element);
-                    context.SaveChanges();
-                }
-                else
-                {
-                    throw new Exception("Элемент не найден");
-                }
-            }
-        }
+                var IceCream = context.IceCreams.FirstOrDefault(rec => rec.Id == model.Id);
 
-        private IceCream CreateModel(IceCreamBindingModel model, IceCream icecream)
-        {
-            icecream.IceCreamName = model.IceCreamName;
-            icecream.Price = model.Price;
-            return icecream;
-        }
-
-        private IceCream CreateModel(IceCreamBindingModel model, IceCream icecream,
-        IceCreamDatabase context)
-        {
-            icecream.IceCreamName = model.IceCreamName;
-            icecream.Price = model.Price;
-            if (model.Id.HasValue)
-            {
-                var icecreamIngredients = context.IceCreamIngredients.Where(rec =>
-                rec.IceCreamId == model.Id.Value).ToList();
-                context.IceCreamIngredients.RemoveRange(icecreamIngredients.Where(rec =>
-                !model.IceCreamIngredients.ContainsKey(rec.IngredientId)).ToList());
-                context.SaveChanges();
-                foreach (var updateComponent in icecreamIngredients)
+                if (IceCream == null)
                 {
-                    updateComponent.Count =
-                    model.IceCreamIngredients[updateComponent.IngredientId].Item2;
-                    model.IceCreamIngredients.Remove(updateComponent.IngredientId);
+                    throw new Exception("Компонент не найден");
                 }
+
+                context.IceCreams.Remove(IceCream);
                 context.SaveChanges();
             }
-            foreach (var pc in model.IceCreamIngredients)
-            {
-                context.IceCreamIngredients.Add(new IceCreamIngredient
-                {
-                    IceCreamId = icecream.Id,
-                    IngredientId = pc.Key,
-                    Count = pc.Value.Item2,
-                });
-                context.SaveChanges();                             
-            }
-            return icecream;
         }
     }
 }

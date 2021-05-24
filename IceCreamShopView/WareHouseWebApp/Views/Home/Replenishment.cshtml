@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Replenishment";
+}
+
+<div class="text-center">
+    <h2 class="display-4">Пополнить склад</h2>
+</div>
+<form method="post">
+    <div class="row">
+        <div class="col-4">Склад:</div>
+        <div class="col-8">
+            <select name="wareHouseId" class="form-control" asp-items="@(new SelectList(ViewBag.WareHouses, "Id", "WareHouseName"))"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">Компонент:</div>
+        <div class="col-8">
+            <select name="ingredientId" class="form-control" asp-items="@(new SelectList(ViewBag.Ingredients, "Id", "IngredientName"))"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">Количество:</div>
+        <div class="col-8"><input type="text" name="count" /></div>
+    </div>
+    <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4">
+            <input type="submit" value="Пополнить" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

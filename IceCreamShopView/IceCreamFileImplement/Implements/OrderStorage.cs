@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using IceCreamFileImplement.Models;
-using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopBusinessLogic.Enums;
