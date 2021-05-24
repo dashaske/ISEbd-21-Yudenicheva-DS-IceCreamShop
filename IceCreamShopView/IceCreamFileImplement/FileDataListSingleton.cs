@@ -20,6 +20,7 @@ namespace IceCreamFileImplement
         private readonly string ClientFileName = "Client.xml";
         private readonly string ImplementerFileName = "Implementer.xml";
         private readonly string MessageInfoFileName = "MessageInfo.xml";
+        private readonly string WareHouseFileName = "WareHouse.xml";
 
         public List<Ingredient> Ingredients { get; set; }
 
@@ -30,7 +31,10 @@ namespace IceCreamFileImplement
         public List<Client> Clients { get; set; }
 
         public List<Implementer> Implementers { get; set; }
+
         public List<MessageInfo> MessageInfoes { get; set; }
+
+        public List<WareHouse> WareHouses { get; set; }
 
         private FileDataListSingleton()
         {
@@ -40,6 +44,7 @@ namespace IceCreamFileImplement
             Clients = LoadClients();
             Implementers = LoadImplementers();
             MessageInfoes = LoadMessageInfoes();
+            WareHouses = LoadWareHouses();
         }
 
         public static FileDataListSingleton GetInstance()
@@ -60,6 +65,7 @@ namespace IceCreamFileImplement
             SaveClients();
             SaveImplementers();
             SaveMessageInfoes();
+            SaveWareHouses();
         }
 
         private List<Ingredient> LoadIngredients()
@@ -181,6 +187,34 @@ namespace IceCreamFileImplement
                         Status = status,
                         DateCreate = Convert.ToDateTime(elem.Element("DateCreate").Value),
                         DateImplement = date
+                    });
+                }
+            }
+            return list;
+        }
+        private List<WareHouse> LoadWareHouses()
+        {
+            var list = new List<WareHouse>();
+            if (File.Exists(WareHouseFileName))
+            {
+                XDocument xDocument = XDocument.Load(WareHouseFileName);
+                var xElements = xDocument.Root.Elements("WareHouse").ToList();
+                foreach (var elem in xElements)
+                {
+                    var warComp = new Dictionary<int, int>();
+                    foreach (var component in
+                    elem.Element("WareHouseIngredients").Elements("WareHouseIngredients").ToList())
+                    {
+                        warComp.Add(Convert.ToInt32(component.Element("Key").Value),
+                        Convert.ToInt32(component.Element("Value").Value));
+                    }
+                    list.Add(new WareHouse
+                    {
+                        Id = Convert.ToInt32(elem.Attribute("Id").Value),
+                        WareHouseName = elem.Element("WareHouseName").Value,
+                        ResponsiblePersonFCS = elem.Element("ResponsiblePersonFCS").Value,
+                        DateCreate = Convert.ToDateTime(elem.Element("DateCreate").Value),
+                        WareHouseIngredients = warComp
                     });
                 }
             }
@@ -312,6 +346,31 @@ namespace IceCreamFileImplement
                 }
                 XDocument xDocument = new XDocument(xElement);
                 xDocument.Save(OrderFileName);
+            }
+        }
+        private void SaveWareHouses()
+        {
+            if (WareHouses != null)
+            {
+                var xElement = new XElement("WareHouses");
+                foreach (var warehouse in WareHouses)
+                {
+                    var compElement = new XElement("WareHouseIngredients");
+                    foreach (var component in warehouse.WareHouseIngredients)
+                    {
+                        compElement.Add(new XElement("WareHouseIngredients",
+                        new XElement("Key", component.Key),
+                        new XElement("Value", component.Value)));
+                    }
+                    xElement.Add(new XElement("WareHouse",
+                    new XAttribute("Id", warehouse.Id),
+                    new XElement("WareHouseName", warehouse.WareHouseName),
+                    new XElement("Responsible", warehouse.ResponsiblePersonFCS),
+                    new XElement("DateCreate", warehouse.DateCreate),
+                    compElement));
+                }
+                XDocument xDocument = new XDocument(xElement);
+                xDocument.Save(WareHouseFileName);
             }
         }
         private void SaveClients()

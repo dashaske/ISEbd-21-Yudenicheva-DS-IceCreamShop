@@ -16,10 +16,13 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         private readonly IClientStorage _clientStorage;
 
         private readonly object locker = new object();
-        public OrderLogic(IOrderStorage orderStorage, IClientStorage clientStorage)
+
+        private readonly IWareHouseStorage _warehouseStorage;
+        public OrderLogic(IOrderStorage orderStorage, IClientStorage clientStorage, IWareHouseStorage warehouseStorage)
         {
             _orderStorage = orderStorage;
             _clientStorage = clientStorage;
+            _warehouseStorage = warehouseStorage;
         }
         public List<OrderViewModel> Read(OrderBindingModel model)
         {
@@ -75,7 +78,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 {
                     throw new Exception("У заказа уже есть исполнитель");
                 }
-                _orderStorage.Update(new OrderBindingModel
+                OrderBindingModel orderModel = new OrderBindingModel
                 {
                     Id = order.Id,
                     IceCreamId = order.IceCreamId,
@@ -86,7 +89,13 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     DateImplement = DateTime.Now,
                     Status = OrderStatus.Выполняется,
                     ClientId = order.ClientId
-                });
+                };
+                if (!_warehouseStorage.CheckAndTake(order.IceCreamId, order.Count))
+                {
+                    orderModel.Status = OrderStatus.ТребуютсяMатериалы;
+                    orderModel.ImplementerId = null;
+                }
+                _orderStorage.Update(orderModel);
 
                 MailLogic.MailSendAsync(new MailSendInfo
                 {

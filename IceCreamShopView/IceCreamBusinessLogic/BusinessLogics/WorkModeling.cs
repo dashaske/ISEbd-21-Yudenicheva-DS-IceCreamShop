@@ -52,75 +52,66 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         /// <param name="implementer"></param>
         /// <param name="orders"></param>
         private async void WorkerWorkAsync(ImplementerViewModel implementer,
-            List<OrderViewModel> orders)
+        List<OrderViewModel> orders)
         {
-            var runOrders = await Task.Run(() => _orderStorage.GetFilteredList(new OrderBindingModel
+            // ищем заказы, которые уже в работе (вдруг исполнителя прервали)
+            var runOrders = await Task.Run(() => _orderStorage.GetFilteredList(new
+            OrderBindingModel
+            { ImplementerId = implementer.Id }));
+
+            var needComponentOrders = await Task.Run(() => _orderStorage.GetFilteredList(new
+            OrderBindingModel
             {
-                ImplementerId = implementer.Id
+                NeedIngredientOrders = true,
             }));
 
             foreach (var order in runOrders)
             {
+                // делаем работу заново
                 Thread.Sleep(implementer.WorkingTime * rnd.Next(1, 5) * order.Count);
-
                 _orderLogic.FinishOrder(new ChangeStatusBindingModel
                 {
-                    OrderId = order.Id
+                    OrderId = order.Id,
+                    ImplementerId = implementer.Id
                 });
-
+                // отдыхаем
                 Thread.Sleep(implementer.PauseTime);
             }
 
-            var ordersRequiringMaterials = await Task.Run(() => _orderStorage.GetFullList()
-            .Where(rec => rec.Status == OrderStatus.ТребуютсяMатериалы).ToList());
-            foreach (var order in ordersRequiringMaterials)
+            foreach (var order in needComponentOrders)
             {
-                try
-                {
-                    _orderLogic.TakeOrderInWork(new ChangeStatusBindingModel
-                    {
-                        OrderId = order.Id,
-                        ImplementerId = implementer.Id
-                    });
-                    if (_orderStorage.GetElement(new OrderBindingModel { Id = order.Id }).Status == OrderStatus.ТребуютсяMатериалы)
-                    {
-                        continue;
-                    }
-                    Thread.Sleep(implementer.WorkingTime * rnd.Next(1, 5) * order.Count);
-                    _orderLogic.FinishOrder(new ChangeStatusBindingModel
-                    {
-                        OrderId = order.Id
-                    });
-                    Thread.Sleep(implementer.PauseTime);
-                }
-                catch (Exception) { }
+                RunOrder(order, implementer);
             }
-
             await Task.Run(() =>
             {
                 foreach (var order in orders)
                 {
-                    try
-                    {
-                        _orderLogic.TakeOrderInWork(new ChangeStatusBindingModel
-                        {
-                            OrderId = order.Id,
-                            ImplementerId = implementer.Id
-                        });
-                        if (_orderStorage.GetElement(new OrderBindingModel { Id = order.Id }).Status == OrderStatus.ТребуютсяMатериалы)
-                        {
-                            continue;
-                        }
-                        Thread.Sleep(implementer.WorkingTime * rnd.Next(1, 5) * order.Count);
-                        _orderLogic.FinishOrder(new ChangeStatusBindingModel
-                        {
-                            OrderId = order.Id
-                        });
-                        Thread.Sleep(implementer.PauseTime);
-                    }
-                    catch (Exception) { }
+                    RunOrder(order, implementer);
                 }
             });
+        }
+        private void RunOrder(OrderViewModel order, ImplementerViewModel implementer)
+        {
+            // попытка назначить заказ на исполнителя
+            try
+            {
+                _orderLogic.TakeOrderInWork(new ChangeStatusBindingModel
+                {
+                    OrderId = order.Id,
+                    ImplementerId = implementer.Id
+                });
+                // работа
+                Thread.Sleep(implementer.WorkingTime * rnd.Next(1, 5) *
+                order.Count);
+                _orderLogic.FinishOrder(new ChangeStatusBindingModel
+                {
+                    OrderId = order.Id,
+                    ImplementerId = implementer.Id
+                });
+                // отдых
+                Thread.Sleep(implementer.PauseTime);
+            }
+            catch (Exception) { }
         }
     }
 }

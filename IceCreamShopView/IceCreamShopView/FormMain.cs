@@ -143,5 +143,17 @@ namespace IceCreamShopView
             var form = Container.Resolve<FormMails>();
             form.ShowDialog();
         }
+
+        private void пополнениеСкладовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormReplenishmentWareHouse>();
+            form.ShowDialog();
+        }
+
+        private void складыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormWareHouses>();
+            form.ShowDialog();
+        }
     }
 }

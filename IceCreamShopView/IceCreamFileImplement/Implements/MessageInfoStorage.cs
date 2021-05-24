@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace IceCreamFileImplement.Implements
 {
-    public class MessageInfoStorage : IMessageInfoStorage
+    public class MessageInfoStorage
     {
         private readonly FileDataListSingleton source;
 

@@ -15,5 +15,8 @@ namespace IceCreamDatabaseImplement.Models
 
         [ForeignKey("IngredientId")]
         public virtual List<IceCreamIngredient> IceCreamIngredients { get; set; }
+
+        [ForeignKey("IngredientId")]
+        public virtual List<WareHouseIngredient> WareHouseIngredient { get; set; }
     }
 }

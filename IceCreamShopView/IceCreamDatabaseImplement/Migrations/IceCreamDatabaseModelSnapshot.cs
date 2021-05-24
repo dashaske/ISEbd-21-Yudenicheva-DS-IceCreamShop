@@ -260,7 +260,7 @@ namespace IceCreamDatabaseImplement.Migrations
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.MessageInfo", b =>
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.Client", "Client")
-                        .WithMany()
+                        .WithMany("MessageInfo")
                         .HasForeignKey("ClientId");
                 });
 
@@ -286,7 +286,7 @@ namespace IceCreamDatabaseImplement.Migrations
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.Ingredient", "Ingredient")
-                        .WithMany()
+                        .WithMany("WareHouseIngredient")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

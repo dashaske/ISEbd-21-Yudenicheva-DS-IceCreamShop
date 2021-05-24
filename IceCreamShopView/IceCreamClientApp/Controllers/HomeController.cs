@@ -37,14 +37,15 @@ namespace IceCreamClientApp.Controllers
             return View(Program.Client);
         }
 
-        public IActionResult Mails()
+        public IActionResult Mails(int page = 1)
         {
             if (Program.Client == null)
             {
                 return Redirect("~/Home/Enter");
             }
-            var model = APIClient.GetRequest<List<MessageInfoViewModel>>($"api/client/getmessages?clientId={Program.Client.Id}");
-            return View(model);
+            int pageSize = 7;   // кол-во элементов на странице            
+            return View(APIClient.GetRequest<PageViewModel>($"api/client/GetPage?pageSize={pageSize}" +
+                $"&page={page}&ClientId={Program.Client.Id}"));
         }
 
         [HttpPost]

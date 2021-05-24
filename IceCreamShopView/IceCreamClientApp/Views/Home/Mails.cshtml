@@ -1,5 +1,5 @@
 ﻿@using IceCreamShopBusinessLogic.ViewModel
-@model List<MessageInfoViewModel>
+@model PageViewModel
 @{
     ViewData["Title"] = "Mails";
 }
@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.Messages)
                 {
                     <tr>
                         <td>
@@ -52,3 +52,27 @@
         </table>
     }
 </div>
+@if (Model.HasPreviousPage)
+{
+<a asp-action="Mails"
+   asp-route-page="@(Model.PageNumber - 1)"
+   class="btn btn-outline-dark">
+    <i class="glyphicon glyphicon-chevron-left"></i>
+    Назад
+</a>
+}
+
+@for (int i = Model.PageNumber >= 6 ? Model.PageNumber - 5 : 1; i <= Model.TotalPages && i <= Model.PageNumber + 5; ++i)
+{
+    <a asp-action="Mails" asp-route-page="@i">@i </a>
+}
+
+@if (Model.HasNextPage)
+{
+    <a asp-action="Mails"
+       asp-route-page="@(Model.PageNumber + 1)"
+       class="btn btn-outline-dark">
+        Вперед
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}

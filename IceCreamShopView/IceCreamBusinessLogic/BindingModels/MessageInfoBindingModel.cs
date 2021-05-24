@@ -23,5 +23,10 @@ namespace IceCreamShopBusinessLogic.BindingModels
 
         [DataMember]
         public DateTime DateDelivery { get; set; }
+        [DataMember]
+        public int? PageSize { get; set; }
+
+        [DataMember]
+        public int? Page { get; set; }
     }
 }
