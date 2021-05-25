@@ -10,6 +10,9 @@ namespace IceCreamShopBusinessLogic.BindingModels
         public int? ClientId { get; set; }
 
         [DataMember]
+        public int? PageNumber { get; set; }
+
+        [DataMember]
         public string MessageId { get; set; }
 
         [DataMember]
@@ -23,10 +26,5 @@ namespace IceCreamShopBusinessLogic.BindingModels
 
         [DataMember]
         public DateTime DateDelivery { get; set; }
-        [DataMember]
-        public int? PageSize { get; set; }
-
-        [DataMember]
-        public int? Page { get; set; }
     }
 }

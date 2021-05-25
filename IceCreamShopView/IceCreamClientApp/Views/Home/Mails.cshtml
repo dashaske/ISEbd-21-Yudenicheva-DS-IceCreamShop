@@ -1,18 +1,13 @@
 ﻿@using IceCreamShopBusinessLogic.ViewModel
-@model PageViewModel
+@model List<MessageInfoViewModel>
 @{
     ViewData["Title"] = "Mails";
 }
 <div class="text-center">
-    <h1 class="display-4">Письма</h1>
+    <h2 class="display-4">Отправить письмо</h2>
 </div>
 <div class="text-center">
     @{
-        if (Model == null)
-        {
-            <h3 class="display-4">Авторизируйтесь</h3>
-            return;
-        }
         <table class="table">
             <thead>
                 <tr>
@@ -31,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.Messages)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>
@@ -50,29 +45,20 @@
                 }
             </tbody>
         </table>
+        <form>
+            <button asp-action="PrevMailPage" class="btn btn-primary">Назад</button>
+            <input type="text" name="pageNumber" value="@ViewBag.Id" size="6" />
+            <button asp-action="NextMailPage" class="btn btn-primary">Вперёд</button>
+        </form>
+
     }
 </div>
-@if (Model.HasPreviousPage)
-{
-<a asp-action="Mails"
-   asp-route-page="@(Model.PageNumber - 1)"
-   class="btn btn-outline-dark">
-    <i class="glyphicon glyphicon-chevron-left"></i>
-    Назад
-</a>
-}
 
-@for (int i = Model.PageNumber >= 6 ? Model.PageNumber - 5 : 1; i <= Model.TotalPages && i <= Model.PageNumber + 5; ++i)
+@section Scripts
 {
-    <a asp-action="Mails" asp-route-page="@i">@i </a>
-}
-
-@if (Model.HasNextPage)
-{
-    <a asp-action="Mails"
-       asp-route-page="@(Model.PageNumber + 1)"
-       class="btn btn-outline-dark">
-        Вперед
-        <i class="glyphicon glyphicon-chevron-right"></i>
-    </a>
+    <script>$('form input').change(function () {
+            if ($('form input').val != '') {
+            $(this).closest('form').submit();
+        }
+    });</script>
 }

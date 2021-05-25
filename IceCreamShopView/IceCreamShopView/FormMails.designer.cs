@@ -30,13 +30,9 @@ namespace IceCreamShopView
         private void InitializeComponent()
         {
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.buttonPage1 = new System.Windows.Forms.Button();
-            this.buttonPage2 = new System.Windows.Forms.Button();
-            this.buttonPage3 = new System.Windows.Forms.Button();
-            this.buttonPage4 = new System.Windows.Forms.Button();
-            this.buttonPage5 = new System.Windows.Forms.Button();
             this.buttonNext = new System.Windows.Forms.Button();
             this.buttonBack = new System.Windows.Forms.Button();
+            this.textBoxPage = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -49,54 +45,9 @@ namespace IceCreamShopView
             this.dataGridView.Size = new System.Drawing.Size(621, 202);
             this.dataGridView.TabIndex = 0;
             // 
-            // buttonPage1
-            // 
-            this.buttonPage1.Location = new System.Drawing.Point(159, 223);
-            this.buttonPage1.Name = "buttonPage1";
-            this.buttonPage1.Size = new System.Drawing.Size(34, 30);
-            this.buttonPage1.TabIndex = 1;
-            this.buttonPage1.Text = "1";
-            this.buttonPage1.UseVisualStyleBackColor = true;
-            // 
-            // buttonPage2
-            // 
-            this.buttonPage2.Location = new System.Drawing.Point(232, 223);
-            this.buttonPage2.Name = "buttonPage2";
-            this.buttonPage2.Size = new System.Drawing.Size(34, 30);
-            this.buttonPage2.TabIndex = 2;
-            this.buttonPage2.Text = "2";
-            this.buttonPage2.UseVisualStyleBackColor = true;
-            // 
-            // buttonPage3
-            // 
-            this.buttonPage3.Location = new System.Drawing.Point(300, 223);
-            this.buttonPage3.Name = "buttonPage3";
-            this.buttonPage3.Size = new System.Drawing.Size(34, 30);
-            this.buttonPage3.TabIndex = 3;
-            this.buttonPage3.Text = "3";
-            this.buttonPage3.UseVisualStyleBackColor = true;
-            // 
-            // buttonPage4
-            // 
-            this.buttonPage4.Location = new System.Drawing.Point(373, 223);
-            this.buttonPage4.Name = "buttonPage4";
-            this.buttonPage4.Size = new System.Drawing.Size(34, 30);
-            this.buttonPage4.TabIndex = 4;
-            this.buttonPage4.Text = "4";
-            this.buttonPage4.UseVisualStyleBackColor = true;
-            // 
-            // buttonPage5
-            // 
-            this.buttonPage5.Location = new System.Drawing.Point(446, 223);
-            this.buttonPage5.Name = "buttonPage5";
-            this.buttonPage5.Size = new System.Drawing.Size(34, 30);
-            this.buttonPage5.TabIndex = 5;
-            this.buttonPage5.Text = "5";
-            this.buttonPage5.UseVisualStyleBackColor = true;
-            // 
             // buttonNext
             // 
-            this.buttonNext.Location = new System.Drawing.Point(521, 227);
+            this.buttonNext.Location = new System.Drawing.Point(407, 225);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(75, 23);
             this.buttonNext.TabIndex = 6;
@@ -106,7 +57,7 @@ namespace IceCreamShopView
             // 
             // buttonBack
             // 
-            this.buttonBack.Location = new System.Drawing.Point(40, 227);
+            this.buttonBack.Location = new System.Drawing.Point(155, 227);
             this.buttonBack.Name = "buttonBack";
             this.buttonBack.Size = new System.Drawing.Size(84, 23);
             this.buttonBack.TabIndex = 7;
@@ -114,36 +65,37 @@ namespace IceCreamShopView
             this.buttonBack.UseVisualStyleBackColor = true;
             this.buttonBack.Click += new System.EventHandler(this.buttonBack_Click);
             // 
+            // textBoxPage
+            // 
+            this.textBoxPage.Location = new System.Drawing.Point(273, 227);
+            this.textBoxPage.Name = "textBoxPage";
+            this.textBoxPage.Size = new System.Drawing.Size(100, 20);
+            this.textBoxPage.TabIndex = 8;
+            this.textBoxPage.TextChanged += new System.EventHandler(this.textBoxPage_TextChanged);
+            // 
             // FormMails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(637, 266);
+            this.Controls.Add(this.textBoxPage);
             this.Controls.Add(this.buttonBack);
             this.Controls.Add(this.buttonNext);
-            this.Controls.Add(this.buttonPage5);
-            this.Controls.Add(this.buttonPage4);
-            this.Controls.Add(this.buttonPage3);
-            this.Controls.Add(this.buttonPage2);
-            this.Controls.Add(this.buttonPage1);
             this.Controls.Add(this.dataGridView);
             this.Name = "FormMails";
             this.Text = "FormMails";
             this.Load += new System.EventHandler(this.FormMails_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView;
-        private System.Windows.Forms.Button buttonPage1;
-        private System.Windows.Forms.Button buttonPage2;
-        private System.Windows.Forms.Button buttonPage3;
-        private System.Windows.Forms.Button buttonPage4;
-        private System.Windows.Forms.Button buttonPage5;
         private System.Windows.Forms.Button buttonNext;
         private System.Windows.Forms.Button buttonBack;
+        private System.Windows.Forms.TextBox textBoxPage;
     }
 }

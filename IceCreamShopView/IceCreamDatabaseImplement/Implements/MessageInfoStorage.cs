@@ -10,20 +10,15 @@ namespace IceCreamDatabaseImplement.Implements
 {
     public class MessageInfoStorage : IMessageInfoStorage
     {
+        private readonly int stringsOnPage = 7;
+
         public List<MessageInfoViewModel> GetFullList()
         {
             using (var context = new IceCreamDatabase())
             {
                 return context.MessageInfoes
-                .Select(rec => new MessageInfoViewModel
-                {
-                    MessageId = rec.MessageId,
-                    SenderName = rec.SenderName,
-                    DateDelivery = rec.DateDelivery,
-                    Subject = rec.Subject,
-                    Body = rec.Body
-                })
-                .ToList();
+                    .Select(CreateModel)
+                    .ToList();
             }
         }
 
@@ -33,22 +28,22 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 return null;
             }
+
             using (var context = new IceCreamDatabase())
             {
-                return context.MessageInfoes
-                .Where(rec => (model.ClientId.HasValue && rec.ClientId ==
-                model.ClientId) ||
-                (!model.ClientId.HasValue && rec.DateDelivery.Date ==
-                model.DateDelivery.Date))
-                .Select(rec => new MessageInfoViewModel
+                var messageInfoes = context.MessageInfoes
+                    .Where(rec => (model.ClientId.HasValue && rec.ClientId == model.ClientId) ||
+                    (!model.ClientId.HasValue && rec.DateDelivery.Date == model.DateDelivery.Date) ||
+                    (!model.ClientId.HasValue && model.PageNumber.HasValue) ||
+                    (model.ClientId.HasValue && rec.ClientId == model.ClientId && model.PageNumber.HasValue));
+
+                if (model.PageNumber.HasValue)
                 {
-                    MessageId = rec.MessageId,
-                    SenderName = rec.SenderName,
-                    DateDelivery = rec.DateDelivery,
-                    Subject = rec.Subject,
-                    Body = rec.Body
-                })
-                .ToList();
+                    messageInfoes = messageInfoes.Skip(stringsOnPage * (model.PageNumber.Value - 1))
+                        .Take(stringsOnPage);
+                }
+
+                return messageInfoes.Select(CreateModel).ToList();
             }
         }
 
@@ -56,12 +51,12 @@ namespace IceCreamDatabaseImplement.Implements
         {
             using (var context = new IceCreamDatabase())
             {
-                MessageInfo element = context.MessageInfoes.FirstOrDefault(rec =>
-                rec.MessageId == model.MessageId);
+                MessageInfo element = context.MessageInfoes.FirstOrDefault(rec => rec.MessageId == model.MessageId);
                 if (element != null)
                 {
-                    throw new Exception("Уже есть письмо с таким идентификатором");
+                    return;
                 }
+
                 context.MessageInfoes.Add(new MessageInfo
                 {
                     MessageId = model.MessageId,
@@ -74,30 +69,17 @@ namespace IceCreamDatabaseImplement.Implements
                 context.SaveChanges();
             }
         }
-        public int Count()
-        {
-            using (var context = new IceCreamDatabase())
-            {
-                return context.MessageInfoes.Count();
-            }
-        }
 
-        public List<MessageInfoViewModel> GetMessagesForPage(MessageInfoBindingModel model)
+        public MessageInfoViewModel CreateModel(MessageInfo messageInfo)
         {
-            using (var context = new IceCreamDatabase())
+            return new MessageInfoViewModel
             {
-                return context.MessageInfoes.Where(rec => (model.ClientId.HasValue &&
-                model.ClientId.Value == rec.ClientId) || !model.ClientId.HasValue)
-                    .Skip((model.Page.Value - 1) * model.PageSize.Value).Take(model.PageSize.Value)
-                    .ToList().Select(rec => new MessageInfoViewModel
-                    {
-                        MessageId = rec.MessageId,
-                        SenderName = rec.SenderName,
-                        DateDelivery = rec.DateDelivery,
-                        Subject = rec.Subject,
-                        Body = rec.Body
-                    }).ToList();
-            }
+                MessageId = messageInfo.MessageId,
+                SenderName = messageInfo.SenderName,
+                DateDelivery = messageInfo.DateDelivery,
+                Subject = messageInfo.Subject,
+                Body = messageInfo.Body
+            };
         }
     }
 }
