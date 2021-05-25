@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IceCreamShopBusinessLogic.Interfaces;
-using IceCreamShopBusinessLogic.BusinessLogics;
-using IceCreamDatabaseImplement.Implements;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,6 +6,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using IceCreamShopBusinessLogic.BusinessLogics;
+using IceCreamShopBusinessLogic.HelperModels;
+using IceCreamShopBusinessLogic.Interfaces;
+using IceCreamDatabaseImplement.Implements;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace IceCreamRestApi
 {
@@ -28,12 +30,23 @@ namespace IceCreamRestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddTransient<IClientStorage, ClientStorage>();
+            services.AddTransient<IMessageInfoStorage, MessageInfoStorage>();
             services.AddTransient<IOrderStorage, OrderStorage>();
             services.AddTransient<IIceCreamStorage, IceCreamStorage>();
+            services.AddTransient<MailLogic>();
             services.AddTransient<OrderLogic>();
             services.AddTransient<ClientLogic>();
             services.AddTransient<IceCreamLogic>();
+            services.AddControllers().AddNewtonsoftJson();
+            MailLogic.MailConfig(new MailConfig
+            {
+                SmtpClientHost = "smtp.gmail.com",
+                SmtpClientPort = 587,
+                MailLogin = "yudenichevaforlab@gmail.com",
+                MailPassword = "passwd2001",
+            });
             services.AddControllers().AddNewtonsoftJson();
         }
 

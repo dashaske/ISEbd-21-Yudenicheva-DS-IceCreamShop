@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.Enums;
@@ -31,16 +31,10 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
 
         public void CreateOrUpdate(ImplementerBindingModel model)
         {
-            var implementer = _implementerStorage.GetElement(new ImplementerBindingModel
-            {
-                ImplementerFIO = model.ImplementerFIO
-            });
-
-            if (implementer != null && implementer.Id != model.Id)
+            if(model != null && model.ImplementerFIO != model.ImplementerFIO)
             {
                 throw new Exception("Уже есть исполнитель с таким именем");
             }
-
             if (model.Id.HasValue)
             {
                 _implementerStorage.Update(model);
