@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using IceCreamShopBusinessLogic.BusinessLogics;
 using IceCreamShopBusinessLogic.ViewModels;
+using IceCreamShopBusinessLogic.ViewModel;
 using IceCreamShopBusinessLogic.BindingModels;
 
 namespace IceCreamRestApi.Controllers

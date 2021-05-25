@@ -1,8 +1,9 @@
 ﻿using System;
-using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.BindingModel;
+using IceCreamShopBusinessLogic.BindingModels;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
+using IceCreamShopBusinessLogic.HelperModels;
 using IceCreamShopBusinessLogic.Enums;
 using System.Collections.Generic;
 
@@ -12,16 +13,17 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
     {
         private readonly IOrderStorage _orderStorage;
 
+        private readonly IClientStorage _clientStorage;
+
         private readonly object locker = new object();
 
-        private readonly IWareHouseStorage _wareHouseStorage;
-
-        public OrderLogic(IOrderStorage orderStorage, IWareHouseStorage wareHouseStorage)
+        private readonly IWareHouseStorage _warehouseStorage;
+        public OrderLogic(IOrderStorage orderStorage, IClientStorage clientStorage, IWareHouseStorage warehouseStorage)
         {
             _orderStorage = orderStorage;
-            _wareHouseStorage = wareHouseStorage;
+            _clientStorage = clientStorage;
+            _warehouseStorage = warehouseStorage;
         }
-
         public List<OrderViewModel> Read(OrderBindingModel model)
         {
             if (model == null)
@@ -34,7 +36,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             }
             return _orderStorage.GetFilteredList(model);
         }
-
         public void CreateOrder(CreateOrderBindingModel model)
         {
             _orderStorage.Insert(new OrderBindingModel
@@ -46,8 +47,17 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 Status = OrderStatus.Принят,
                 ClientId = model.ClientId
             });
-        }
 
+            MailLogic.MailSendAsync(new MailSendInfo
+            {
+                MailAddress = _clientStorage.GetElement(new ClientBindingModel
+                {
+                    Id = model.ClientId
+                })?.Email,
+                Subject = $"Новый заказ",
+                Text = $"Заказ от {DateTime.Now} на сумму {model.Sum:N2} принят."
+            });
+        }
         public void TakeOrderInWork(ChangeStatusBindingModel model)
         {
             lock (locker)
@@ -60,9 +70,9 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 {
                     throw new Exception("Не найден заказ");
                 }
-                if (order.Status != OrderStatus.Принят && order.Status != OrderStatus.ТребуютсяMатериалы)
+                if (order.Status != OrderStatus.Принят)
                 {
-                    throw new Exception("Заказ не в статусе \"Принят\" или \"Требуются материалы\"");
+                    throw new Exception("Заказ не в статусе \"Принят\"");
                 }
                 if (order.ImplementerId.HasValue)
                 {
@@ -80,21 +90,28 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                     Status = OrderStatus.Выполняется,
                     ClientId = order.ClientId
                 };
-                if (!_wareHouseStorage.CheckAndTake(order.IceCreamId, order.Count))
+                if (!_warehouseStorage.CheckAndTake(order.IceCreamId, order.Count))
                 {
                     orderModel.Status = OrderStatus.ТребуютсяMатериалы;
                     orderModel.ImplementerId = null;
                 }
                 _orderStorage.Update(orderModel);
+
+                MailLogic.MailSendAsync(new MailSendInfo
+                {
+                    MailAddress = _clientStorage.GetElement(new ClientBindingModel
+                    {
+                        Id = order.ClientId
+                    })?.Email,
+                    Subject = $"Заказ №{order.Id}",
+                    Text = $"Заказ №{order.Id} передан в работу."
+                });
             }
         }
 
         public void FinishOrder(ChangeStatusBindingModel model)
         {
-            var order = _orderStorage.GetElement(new OrderBindingModel
-            {
-                Id = model.OrderId
-            });
+            var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
             if (order == null)
             {
                 throw new Exception("Не найден заказ");
@@ -103,7 +120,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             {
                 throw new Exception("Заказ не в статусе \"Выполняется\"");
             }
-
             _orderStorage.Update(new OrderBindingModel
             {
                 Id = order.Id,
@@ -114,7 +130,17 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 DateImplement = order.DateImplement,
                 Status = OrderStatus.Готов,
                 ClientId = order.ClientId,
-                ImplementerId = order.ImplementerId
+                ImplementerId = model.ImplementerId
+            });
+
+            MailLogic.MailSendAsync(new MailSendInfo
+            {
+                MailAddress = _clientStorage.GetElement(new ClientBindingModel
+                {
+                    Id = order.ClientId
+                })?.Email,
+                Subject = $"Заказ №{order.Id}",
+                Text = $"Заказ №{order.Id} выполнен."
             });
         }
         public void PayOrder(ChangeStatusBindingModel model)
@@ -125,7 +151,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             });
             if (order == null)
             {
-                throw new Exception("Не найден заказ");
+                throw new Exception("Не найден заказ!");
             }
             if (order.Status != OrderStatus.Готов)
             {
@@ -141,6 +167,16 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 DateImplement = order.DateImplement,
                 Status = OrderStatus.Оплачен,
                 ClientId = order.ClientId
+            });
+
+            MailLogic.MailSendAsync(new MailSendInfo
+            {
+                MailAddress = _clientStorage.GetElement(new ClientBindingModel
+                {
+                    Id = order.ClientId
+                })?.Email,
+                Subject = $"Заказ №{order.Id}",
+                Text = $"Заказ №{order.Id} оплачен."
             });
         }
     }

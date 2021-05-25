@@ -1,0 +1,64 @@
+﻿@using IceCreamShopBusinessLogic.ViewModel
+@model List<MessageInfoViewModel>
+@{
+    ViewData["Title"] = "Mails";
+}
+<div class="text-center">
+    <h2 class="display-4">Отправить письмо</h2>
+</div>
+<div class="text-center">
+    @{
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Отправитель
+                    </th>
+                    <th>
+                        Дата письма
+                    </th>
+                    <th>
+                        Заголовок
+                    </th>
+                    <th>
+                        Текст
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SenderName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DateDelivery)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Subject)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Body)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <form>
+            <button asp-action="PrevMailPage" class="btn btn-primary">Назад</button>
+            <input type="text" name="pageNumber" value="@ViewBag.Id" size="6" />
+            <button asp-action="NextMailPage" class="btn btn-primary">Вперёд</button>
+        </form>
+
+    }
+</div>
+
+@section Scripts
+{
+    <script>$('form input').change(function () {
+            if ($('form input').val != '') {
+            $(this).closest('form').submit();
+        }
+    });</script>
+}

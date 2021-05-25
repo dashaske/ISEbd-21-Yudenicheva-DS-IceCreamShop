@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace IceCreamShopListImplement.Imlements
 {
-    public class WareHouseStorage : IWareHouseStorage
+    public class WareHouseStorage 
     {
         private readonly DataListSingleton source;
 

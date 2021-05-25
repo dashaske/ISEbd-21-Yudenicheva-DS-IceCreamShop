@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using IceCreamShopBusinessLogic.HelperModels;
 
 namespace IceCreamRestApi
 {
@@ -28,14 +29,24 @@ namespace IceCreamRestApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddTransient<IClientStorage, ClientStorage>();
+            services.AddTransient<IMessageInfoStorage, MessageInfoStorage>();
             services.AddTransient<IOrderStorage, OrderStorage>();
             services.AddTransient<IIceCreamStorage, IceCreamStorage>();
-            services.AddTransient<IIngredientStorage, IngredientStorage>();
             services.AddTransient<IWareHouseStorage, WareHouseStorage>();
+            services.AddTransient<IIngredientStorage, IngredientStorage>();
+            services.AddTransient<MailLogic>();
             services.AddTransient<OrderLogic>();
             services.AddTransient<ClientLogic>();
             services.AddTransient<IceCreamLogic>();
+            MailLogic.MailConfig(new MailConfig
+            {
+                SmtpClientHost = "smtp.gmail.com",
+                SmtpClientPort = 587,
+                MailLogin = "yudenichevaforlab@gmail.com",
+                MailPassword = "passwd2001",
+            });
             services.AddTransient<WareHouseLogic>();
             services.AddTransient<IngredientLogic>();
             services.AddControllers().AddNewtonsoftJson();

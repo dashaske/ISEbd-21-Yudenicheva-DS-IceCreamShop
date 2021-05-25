@@ -125,6 +125,33 @@ namespace IceCreamDatabaseImplement.Migrations
                     b.ToTable("Ingredients");
                 });
 
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.MessageInfo", b =>
+                {
+                    b.Property<string>("MessageId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateDelivery")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SenderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("MessageInfoes");
+                });
+
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -230,6 +257,13 @@ namespace IceCreamDatabaseImplement.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.MessageInfo", b =>
+                {
+                    b.HasOne("IceCreamDatabaseImplement.Models.Client", "Client")
+                        .WithMany("MessageInfo")
+                        .HasForeignKey("ClientId");
+                });
+
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.Order", b =>
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.Client", "Client")
@@ -252,7 +286,7 @@ namespace IceCreamDatabaseImplement.Migrations
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>
                 {
                     b.HasOne("IceCreamDatabaseImplement.Models.Ingredient", "Ingredient")
-                        .WithMany()
+                        .WithMany("WareHouseIngredient")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

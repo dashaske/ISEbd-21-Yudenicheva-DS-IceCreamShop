@@ -105,6 +105,16 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 })
                 .ToList();
         }
+        public List<ReportOrdersViewModel> GetOrdersGroupByDate()
+        {
+            return _orderStorage.GetFullList().GroupBy(x => x.DateCreate.Date)
+            .Select(x => new ReportOrdersViewModel
+            {
+                DateCreate = x.Key,
+                Count = x.Count(),
+                Sum = x.Sum(rec => rec.Sum),
+            }).ToList();
+        }
         public void SaveIceCreamsToWordFile(ReportBindingModel model)
         {
             SaveToWord.CreateDoc(new WordInfo

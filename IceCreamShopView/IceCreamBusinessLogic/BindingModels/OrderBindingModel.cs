@@ -18,6 +18,8 @@ namespace IceCreamShopBusinessLogic.BindingModels
         [DataMember]
         public bool? FreeOrders { get; set; }
         [DataMember]
+        public bool? NeedIngredientOrders { get; set; }
+        [DataMember]
         public bool? NeedIngridientOrders { get; set; }
         [DataMember]
         public int Count { get; set; }

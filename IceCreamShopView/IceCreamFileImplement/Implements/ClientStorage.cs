@@ -39,7 +39,7 @@ namespace IceCreamFileImplement.Implements
             {
                 return null;
             }
-            var client = source.Clients.FirstOrDefault(rec => rec.Id == model.Id);
+            var client = source.Clients.FirstOrDefault(rec => rec.Id == model.Id || rec.Email == model.Email);
             return client != null ? CreateModel(client) : null;
         }
 
