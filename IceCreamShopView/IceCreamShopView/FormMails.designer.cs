@@ -46,12 +46,12 @@ namespace IceCreamShopView
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Location = new System.Drawing.Point(12, 3);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(619, 356);
+            this.dataGridView.Size = new System.Drawing.Size(621, 202);
             this.dataGridView.TabIndex = 0;
             // 
             // buttonPage1
             // 
-            this.buttonPage1.Location = new System.Drawing.Point(171, 377);
+            this.buttonPage1.Location = new System.Drawing.Point(159, 223);
             this.buttonPage1.Name = "buttonPage1";
             this.buttonPage1.Size = new System.Drawing.Size(34, 30);
             this.buttonPage1.TabIndex = 1;
@@ -60,7 +60,7 @@ namespace IceCreamShopView
             // 
             // buttonPage2
             // 
-            this.buttonPage2.Location = new System.Drawing.Point(238, 377);
+            this.buttonPage2.Location = new System.Drawing.Point(232, 223);
             this.buttonPage2.Name = "buttonPage2";
             this.buttonPage2.Size = new System.Drawing.Size(34, 30);
             this.buttonPage2.TabIndex = 2;
@@ -69,7 +69,7 @@ namespace IceCreamShopView
             // 
             // buttonPage3
             // 
-            this.buttonPage3.Location = new System.Drawing.Point(301, 377);
+            this.buttonPage3.Location = new System.Drawing.Point(300, 223);
             this.buttonPage3.Name = "buttonPage3";
             this.buttonPage3.Size = new System.Drawing.Size(34, 30);
             this.buttonPage3.TabIndex = 3;
@@ -78,7 +78,7 @@ namespace IceCreamShopView
             // 
             // buttonPage4
             // 
-            this.buttonPage4.Location = new System.Drawing.Point(366, 377);
+            this.buttonPage4.Location = new System.Drawing.Point(373, 223);
             this.buttonPage4.Name = "buttonPage4";
             this.buttonPage4.Size = new System.Drawing.Size(34, 30);
             this.buttonPage4.TabIndex = 4;
@@ -87,7 +87,7 @@ namespace IceCreamShopView
             // 
             // buttonPage5
             // 
-            this.buttonPage5.Location = new System.Drawing.Point(429, 377);
+            this.buttonPage5.Location = new System.Drawing.Point(446, 223);
             this.buttonPage5.Name = "buttonPage5";
             this.buttonPage5.Size = new System.Drawing.Size(34, 30);
             this.buttonPage5.TabIndex = 5;
@@ -96,7 +96,7 @@ namespace IceCreamShopView
             // 
             // buttonNext
             // 
-            this.buttonNext.Location = new System.Drawing.Point(506, 381);
+            this.buttonNext.Location = new System.Drawing.Point(521, 227);
             this.buttonNext.Name = "buttonNext";
             this.buttonNext.Size = new System.Drawing.Size(75, 23);
             this.buttonNext.TabIndex = 6;
@@ -106,7 +106,7 @@ namespace IceCreamShopView
             // 
             // buttonBack
             // 
-            this.buttonBack.Location = new System.Drawing.Point(52, 381);
+            this.buttonBack.Location = new System.Drawing.Point(40, 227);
             this.buttonBack.Name = "buttonBack";
             this.buttonBack.Size = new System.Drawing.Size(84, 23);
             this.buttonBack.TabIndex = 7;
@@ -118,7 +118,7 @@ namespace IceCreamShopView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(636, 419);
+            this.ClientSize = new System.Drawing.Size(637, 266);
             this.Controls.Add(this.buttonBack);
             this.Controls.Add(this.buttonNext);
             this.Controls.Add(this.buttonPage5);

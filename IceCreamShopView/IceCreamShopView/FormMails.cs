@@ -28,7 +28,7 @@ namespace IceCreamShopView
         }
         private void LoadData(int page = 1)
         {
-            int pageSize = 10; // Количество элементов на странице
+            int pageSize = 7; // Количество элементов на странице
 
             var list = logic.GetMessagesForPage(new MessageInfoBindingModel
             {
