@@ -230,7 +230,6 @@ namespace IceCreamFileImplement
                 xDocument.Save(IceCreamFileName);
             }
         }
-
         private void SaveOrders()
         {
             if (Orders != null)
