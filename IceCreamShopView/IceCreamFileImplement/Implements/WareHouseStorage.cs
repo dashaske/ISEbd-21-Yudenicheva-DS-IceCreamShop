@@ -138,41 +138,69 @@ namespace IceCreamFileImplement.Implements
             };
         }
 
-        public bool CheckAndTake(int count, Dictionary<int, (string, int)> ingredients)
+        public bool CheckAndTake(int IceCreamId, int Count)
         {
-            foreach (var ingredient in ingredients)
+            var list = GetFullList();
+            var DCount = source.IceCreams.FirstOrDefault(rec => rec.Id == IceCreamId).IceCreamIngredients;
+            DCount = DCount.ToDictionary(rec => rec.Key, rec => rec.Value * Count);
+            Dictionary<int, int> Have = new Dictionary<int, int>();
+
+            // считаем сколько у нас всего нужных компонентов
+            foreach (var view in list)
             {
-                int requiredCount = ingredient.Value.Item2 * count;
-                int availableCount = source.WareHouses
-                    .Where(rec => rec.WareHouseIngredients.ContainsKey(ingredient.Key))
-                    .Sum(rec => rec.WareHouseIngredients[ingredient.Key]);
-                if (availableCount < requiredCount)
+                foreach (var d in view.WareHouseIngredients)
+                {
+                    int key = d.Key;
+                    if (DCount.ContainsKey(key))
+                    {
+                        if (Have.ContainsKey(key))
+                        {
+                            Have[key] += d.Value.Item2;
+                        }
+                        else
+                        {
+                            Have.Add(key, d.Value.Item2);
+                        }
+                    }
+                }
+            }
+
+            //проверяем хватает ли компонентов
+            foreach (var key in Have.Keys)
+            {
+                if (DCount[key] > Have[key])
                 {
                     return false;
                 }
             }
-            foreach (var ingredient in ingredients)
+
+            // вычитаем со складов компоненты
+            foreach (var view in list)
             {
-                int requiredCount = ingredient.Value.Item2 * count;
-                List<WareHouse> availableStoreHouses = source.WareHouses
-                    .Where(rec => rec.WareHouseIngredients.ContainsKey(ingredient.Key))
-                    .ToList();
-                foreach (var storeHouse in availableStoreHouses)
+                var warehouseIngridients = view.WareHouseIngredients;
+                foreach (var key in view.WareHouseIngredients.Keys.ToArray())
                 {
-                    int availableCount = storeHouse.WareHouseIngredients[ingredient.Key];
-                    if (availableCount <= requiredCount)
+                    var value = view.WareHouseIngredients[key];
+                    if (DCount.ContainsKey(key))
                     {
-                        requiredCount = requiredCount - availableCount;
-                        storeHouse.WareHouseIngredients.Remove(ingredient.Key);
-                    }
-                    else
-                    {
-                        storeHouse.WareHouseIngredients[ingredient.Key] -= requiredCount;
-                        requiredCount = 0;
-                    }
-                    if (requiredCount == 0)
-                    {
-                        break;
+                        if (value.Item2 > DCount[key])
+                        {
+                            warehouseIngridients[key] = (value.Item1, value.Item2 - DCount[key]);
+                            DCount[key] = 0;
+                        }
+                        else
+                        {
+                            warehouseIngridients[key] = (value.Item1, 0);
+                            DCount[key] -= value.Item2;
+                        }
+                        Update(new WareHouseBindingModel
+                        {
+                            Id = view.Id,
+                            DateCreate = view.DateCreate,
+                            ResponsiblePersonFCS = view.ResponsiblePersonFCS,
+                            WareHouseName = view.WareHouseName,
+                            WareHouseIngredients = warehouseIngridients
+                        });
                     }
                 }
             }

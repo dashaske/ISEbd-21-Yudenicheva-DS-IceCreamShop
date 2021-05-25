@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace IceCreamShopBusinessLogic.BindingModels
-{ 
-    //смена статуса
+namespace IceCreamShopBusinessLogic.BindingModel
+{ //смена статуса
     public class ChangeStatusBindingModel
     {
         public int OrderId { get; set; }
+        public int? ImplementerId { get; set; }
     }
 }

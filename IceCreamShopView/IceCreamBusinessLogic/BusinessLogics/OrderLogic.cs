@@ -1,5 +1,6 @@
 ﻿using System;
 using IceCreamShopBusinessLogic.BindingModels;
+using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.Interfaces;
 using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopBusinessLogic.Enums;
@@ -10,14 +11,17 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
     public class OrderLogic
     {
         private readonly IOrderStorage _orderStorage;
-        private readonly IIceCreamStorage _icecreamStorage;
+
+        private readonly object locker = new object();
+
         private readonly IWareHouseStorage _wareHouseStorage;
-        public OrderLogic(IOrderStorage orderStorage, IIceCreamStorage icecreamStorage, IWareHouseStorage wareHouseStorage)
+
+        public OrderLogic(IOrderStorage orderStorage, IWareHouseStorage wareHouseStorage)
         {
             _orderStorage = orderStorage;
-            _icecreamStorage = icecreamStorage;
             _wareHouseStorage = wareHouseStorage;
         }
+
         public List<OrderViewModel> Read(OrderBindingModel model)
         {
             if (model == null)
@@ -30,6 +34,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             }
             return _orderStorage.GetFilteredList(model);
         }
+
         public void CreateOrder(CreateOrderBindingModel model)
         {
             _orderStorage.Insert(new OrderBindingModel
@@ -42,38 +47,54 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 ClientId = model.ClientId
             });
         }
+
         public void TakeOrderInWork(ChangeStatusBindingModel model)
         {
-            var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
-            if (order == null)
+            lock (locker)
             {
-                throw new Exception("Не найден заказ");
+                var order = _orderStorage.GetElement(new OrderBindingModel
+                {
+                    Id = model.OrderId
+                });
+                if (order == null)
+                {
+                    throw new Exception("Не найден заказ");
+                }
+                if (order.Status != OrderStatus.Принят && order.Status != OrderStatus.ТребуютсяMатериалы)
+                {
+                    throw new Exception("Заказ не в статусе \"Принят\" или \"Требуются материалы\"");
+                }
+                if (order.ImplementerId.HasValue)
+                {
+                    throw new Exception("У заказа уже есть исполнитель");
+                }
+                OrderBindingModel orderModel = new OrderBindingModel
+                {
+                    Id = order.Id,
+                    IceCreamId = order.IceCreamId,
+                    ImplementerId = model.ImplementerId,
+                    Count = order.Count,
+                    Sum = order.Sum,
+                    DateCreate = order.DateCreate,
+                    DateImplement = DateTime.Now,
+                    Status = OrderStatus.Выполняется,
+                    ClientId = order.ClientId
+                };
+                if (!_wareHouseStorage.CheckAndTake(order.IceCreamId, order.Count))
+                {
+                    orderModel.Status = OrderStatus.ТребуютсяMатериалы;
+                    orderModel.ImplementerId = null;
+                }
+                _orderStorage.Update(orderModel);
             }
-            if (order.Status != OrderStatus.Принят)
-            {
-                throw new Exception("Заказ не в статусе \"Принят\"");
-            }
-            Dictionary<int, (string, int)> ingredients = _icecreamStorage
-               .GetElement(new IceCreamBindingModel { Id = order.IceCreamId }).IceCreamIngredients;
-            if (!_wareHouseStorage.CheckAndTake(order.Count, ingredients))
-            {
-                throw new Exception("Для выполнения заказа не хвататет продуктов на складах");
-            }
-            _orderStorage.Update(new OrderBindingModel
-            {
-                Id = order.Id,
-                IceCreamId = order.IceCreamId,
-                Count = order.Count,
-                Sum = order.Sum,
-                DateCreate = order.DateCreate,
-                DateImplement = DateTime.Now,
-                Status = OrderStatus.Выполняется,
-                ClientId = order.ClientId
-            });
         }
+
         public void FinishOrder(ChangeStatusBindingModel model)
         {
-            var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
+            var order = _orderStorage.GetElement(new OrderBindingModel
+            {
+                Id = model.OrderId
+            });
             if (order == null)
             {
                 throw new Exception("Не найден заказ");
@@ -82,6 +103,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             {
                 throw new Exception("Заказ не в статусе \"Выполняется\"");
             }
+
             _orderStorage.Update(new OrderBindingModel
             {
                 Id = order.Id,
@@ -91,7 +113,8 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
                 DateCreate = order.DateCreate,
                 DateImplement = order.DateImplement,
                 Status = OrderStatus.Готов,
-                ClientId = order.ClientId
+                ClientId = order.ClientId,
+                ImplementerId = order.ImplementerId
             });
         }
         public void PayOrder(ChangeStatusBindingModel model)
@@ -102,7 +125,7 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             });
             if (order == null)
             {
-                throw new Exception("Не найден заказ!");
+                throw new Exception("Не найден заказ");
             }
             if (order.Status != OrderStatus.Готов)
             {

@@ -14,6 +14,6 @@ namespace IceCreamShopBusinessLogic.Interfaces
         void Insert(WareHouseBindingModel model);
         void Update(WareHouseBindingModel model);
         void Delete(WareHouseBindingModel model);
-        bool CheckAndTake(int count, Dictionary<int, (string, int)> ingredients);
+        bool CheckAndTake(int IceCreamId, int Count);
     }
 }

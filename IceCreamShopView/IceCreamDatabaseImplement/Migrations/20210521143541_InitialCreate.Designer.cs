@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IceCreamDatabaseImplement.Migrations
 {
     [DbContext(typeof(IceCreamDatabase))]
-    [Migration("20210517195821_InitialCreate")]
+    [Migration("20210521143541_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,28 @@ namespace IceCreamDatabaseImplement.Migrations
                     b.ToTable("IceCreamIngredients");
                 });
 
+            modelBuilder.Entity("IceCreamDatabaseImplement.Models.Implementer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ImplementerFIO")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PauseTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkingTime")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Implementers");
+                });
+
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.Ingredient", b =>
                 {
                     b.Property<int>("Id")
@@ -127,6 +149,9 @@ namespace IceCreamDatabaseImplement.Migrations
                     b.Property<int>("IceCreamId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ImplementerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -138,6 +163,8 @@ namespace IceCreamDatabaseImplement.Migrations
                     b.HasIndex("ClientId");
 
                     b.HasIndex("IceCreamId");
+
+                    b.HasIndex("ImplementerId");
 
                     b.ToTable("Orders");
                 });
@@ -218,6 +245,10 @@ namespace IceCreamDatabaseImplement.Migrations
                         .HasForeignKey("IceCreamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IceCreamDatabaseImplement.Models.Implementer", "Implementer")
+                        .WithMany("Order")
+                        .HasForeignKey("ImplementerId");
                 });
 
             modelBuilder.Entity("IceCreamDatabaseImplement.Models.WareHouseIngredient", b =>

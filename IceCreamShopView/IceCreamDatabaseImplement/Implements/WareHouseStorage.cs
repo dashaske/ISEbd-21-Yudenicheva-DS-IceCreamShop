@@ -11,148 +11,25 @@ namespace IceCreamDatabaseImplement.Implements
 {
     public class WareHouseStorage : IWareHouseStorage
     {
-        private WareHouse CreateModel(WareHouseBindingModel model, WareHouse wareHouse, IceCreamDatabase context)
-        {
-            wareHouse.WareHouseName = model.WareHouseName;
-            wareHouse.ResponsiblePersonFCS = model.ResponsiblePersonFCS;
-            if (wareHouse.Id == 0)
-            {
-                wareHouse.DateCreate = DateTime.Now;
-                context.WareHouses.Add(wareHouse);
-                context.SaveChanges();
-            }
-
-            if (model.Id.HasValue)
-            {
-                var wareHouseIngredients = context.WareHouseIngredients
-                    .Where(rec => rec.WareHouseId == model.Id.Value)
-                    .ToList();
-
-                context.WareHouseIngredients.RemoveRange(wareHouseIngredients
-                    .Where(rec => !model.WareHouseIngredients.ContainsKey(rec.IngredientId))
-                    .ToList());
-                context.SaveChanges();
-
-                foreach (var updateIngredient in wareHouseIngredients)
-                {
-                    updateIngredient.Count = model.WareHouseIngredients[updateIngredient.IngredientId].Item2;
-                    model.WareHouseIngredients.Remove(updateIngredient.IngredientId);
-                }
-                context.SaveChanges();
-            }
-
-            foreach (var wareHouseIngredient in model.WareHouseIngredients)
-            {
-                context.WareHouseIngredients.Add(new WareHouseIngredient
-                {
-                    WareHouseId = wareHouse.Id,
-                    IngredientId = wareHouseIngredient.Key,
-                    Count = wareHouseIngredient.Value.Item2
-                });
-                context.SaveChanges();
-            }
-
-            return wareHouse;
-        }
-
-        public bool CheckAndTake(int count, Dictionary<int, (string, int)> ingredients)
+        public List<WareHouseViewModel> GetFullList()
         {
             using (var context = new IceCreamDatabase())
             {
-                using (var transaction = context.Database.BeginTransaction())
+                return context.WareHouses
+                .Include(rec => rec.WareHouseIngredients)
+                .ThenInclude(rec => rec.Ingredient)
+                .ToList()
+                .Select(rec => new WareHouseViewModel
                 {
-                    try
-                    {
-                        foreach (var wareHouseIngredient in ingredients)
-                        {
-                            int requiredCount = wareHouseIngredient.Value.Item2 * count;
-                            int countInWareHouses = context.WareHouseIngredients
-                                .Where(rec => rec.IngredientId == wareHouseIngredient.Key)
-                                .Sum(rec => rec.Count);
-                            if (requiredCount > countInWareHouses)
-                            {
-                                throw new Exception("На складе недостаточно ингредиентов");
-                            }
-
-                            IEnumerable<WareHouseIngredient> wareHouseIngredients = context.WareHouseIngredients
-                                .Where(rec => rec.IngredientId == wareHouseIngredient.Key);
-                            foreach (var ingredient in wareHouseIngredients)
-                            {
-                                if (ingredient.Count <= requiredCount)
-                                {
-                                    requiredCount -= ingredient.Count;
-                                    context.WareHouseIngredients.Remove(ingredient);
-                                    context.SaveChanges();
-                                }
-                                else
-                                {
-                                    ingredient.Count -= requiredCount;
-                                    context.SaveChanges();
-                                    requiredCount = 0;
-                                }
-                                if (requiredCount == 0)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public void Delete(WareHouseBindingModel model)
-        {
-            using (var context = new IceCreamDatabase())
-            {
-                var wareHouse = context.WareHouses.FirstOrDefault(rec => rec.Id == model.Id);
-
-                if (wareHouse == null)
-                {
-                    throw new Exception("Склад не найден");
-                }
-
-                context.WareHouses.Remove(wareHouse);
-                context.SaveChanges();
-            }
-        }
-
-        public WareHouseViewModel GetElement(WareHouseBindingModel model)
-        {
-            if (model == null)
-            {
-                return null;
-            }
-
-            using (var context = new IceCreamDatabase())
-            {
-                var wareHouse = context.WareHouses
-                    .Include(rec => rec.WareHouseIngredients)
-                    .ThenInclude(rec => rec.Ingredient)
-                    .FirstOrDefault(rec => rec.WareHouseName == model.WareHouseName ||
-                    rec.Id == model.Id);
-
-                return wareHouse != null ?
-                    new WareHouseViewModel
-                    {
-                        Id = wareHouse.Id,
-                        WareHouseName = wareHouse.WareHouseName,
-                        ResponsiblePersonFCS = wareHouse.ResponsiblePersonFCS,
-                        DateCreate = wareHouse.DateCreate,
-                        WareHouseIngredients = wareHouse.WareHouseIngredients
-                            .ToDictionary(recWareHouseIngredient => recWareHouseIngredient.IngredientId,
-                            recWareHouseIngredient => (recWareHouseIngredient.Ingredient?.IngredientName,
-                            recWareHouseIngredient.Count))
-                    } :
-                    null;
+                    Id = rec.Id,
+                    WareHouseName = rec.WareHouseName,
+                    ResponsiblePersonFCS = rec.ResponsiblePersonFCS,
+                    DateCreate = rec.DateCreate,
+                    WareHouseIngredients = rec.WareHouseIngredients
+                .ToDictionary(recPC => recPC.IngredientId, recPC =>
+                (recPC.Ingredient?.IngredientName, recPC.Count))
+                })
+                .ToList();
             }
         }
 
@@ -162,50 +39,51 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 return null;
             }
-
             using (var context = new IceCreamDatabase())
             {
                 return context.WareHouses
-                    .Include(rec => rec.WareHouseIngredients)
-                    .ThenInclude(rec => rec.Ingredient)
-                    .Where(rec => rec.WareHouseName.Contains(model.WareHouseName))
-                    .ToList()
-                    .Select(rec => new WareHouseViewModel
-                    {
-                        Id = rec.Id,
-                        WareHouseName = rec.WareHouseName,
-                        ResponsiblePersonFCS = rec.ResponsiblePersonFCS,
-                        DateCreate = rec.DateCreate,
-                        WareHouseIngredients = rec.WareHouseIngredients
-                            .ToDictionary(recWareHouseIngredient => recWareHouseIngredient.IngredientId,
-                            recWareHouseIngredient => (recWareHouseIngredient.Ingredient?.IngredientName,
-                            recWareHouseIngredient.Count))
-                    })
-                    .ToList();
+                .Include(rec => rec.WareHouseIngredients)
+                .ThenInclude(rec => rec.Ingredient)
+                .Where(rec => rec.WareHouseName.Contains(model.WareHouseName))
+                .ToList()
+                .Select(rec => new WareHouseViewModel
+                {
+                    Id = rec.Id,
+                    WareHouseName = rec.WareHouseName,
+                    ResponsiblePersonFCS = rec.ResponsiblePersonFCS,
+                    DateCreate = rec.DateCreate,
+                    WareHouseIngredients = rec.WareHouseIngredients
+                .ToDictionary(recPC => recPC.IngredientId, recPC =>
+                (recPC.Ingredient?.IngredientName, recPC.Count))
+                })
+                .ToList();
             }
         }
 
-        public List<WareHouseViewModel> GetFullList()
+        public WareHouseViewModel GetElement(WareHouseBindingModel model)
         {
+            if (model == null)
+            {
+                return null;
+            }
             using (var context = new IceCreamDatabase())
             {
-                return context.WareHouses.Count() == 0 ? new List<WareHouseViewModel>() :
-                    context.WareHouses
-                    .Include(rec => rec.WareHouseIngredients)
-                    .ThenInclude(rec => rec.Ingredient)
-                    .ToList()
-                    .Select(rec => new WareHouseViewModel
-                    {
-                        Id = rec.Id,
-                        WareHouseName = rec.WareHouseName,
-                        ResponsiblePersonFCS = rec.ResponsiblePersonFCS,
-                        DateCreate = rec.DateCreate,
-                        WareHouseIngredients = rec.WareHouseIngredients
-                            .ToDictionary(recWareHouseIngredients => recWareHouseIngredients.IngredientId,
-                            recWareHouseIngredients => (recWareHouseIngredients.Ingredient?.IngredientName,
-                            recWareHouseIngredients.Count))
-                    })
-                    .ToList();
+                var warehouse = context.WareHouses
+                .Include(rec => rec.WareHouseIngredients)
+                .ThenInclude(rec => rec.Ingredient)
+                .FirstOrDefault(rec => rec.WareHouseName.Equals(model.WareHouseName) || rec.Id
+                == model.Id);
+                return warehouse != null ?
+                new WareHouseViewModel
+                {
+                    Id = warehouse.Id,
+                    WareHouseName = warehouse.WareHouseName,
+                    ResponsiblePersonFCS = warehouse.ResponsiblePersonFCS,
+                    DateCreate = warehouse.DateCreate,
+                    WareHouseIngredients = warehouse.WareHouseIngredients
+                .ToDictionary(recPC => recPC.IngredientId, recPC =>
+                (recPC.Ingredient?.IngredientName, recPC.Count))
+                } : null;
             }
         }
 
@@ -217,8 +95,10 @@ namespace IceCreamDatabaseImplement.Implements
                 {
                     try
                     {
-                        CreateModel(model, new WareHouse(), context);
+                        WareHouse warehouse = CreateModel(model, new WareHouse());
+                        context.WareHouses.Add(warehouse);
                         context.SaveChanges();
+                        CreateModel(model, warehouse, context);
 
                         transaction.Commit();
                     }
@@ -239,17 +119,131 @@ namespace IceCreamDatabaseImplement.Implements
                 {
                     try
                     {
-                        var wareHouse = context.WareHouses.FirstOrDefault(rec => rec.Id == model.Id);
-
-                        if (wareHouse == null)
+                        var element = context.WareHouses.FirstOrDefault(rec => rec.Id == model.Id);
+                        if (element == null)
                         {
-                            throw new Exception("Склад не найден");
+                            throw new Exception("Элемент не найден");
                         }
-
-                        CreateModel(model, wareHouse, context);
+                        CreateModel(model, element, context);
                         context.SaveChanges();
-
                         transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public void Delete(WareHouseBindingModel model)
+        {
+            using (var context = new IceCreamDatabase())
+            {
+                WareHouse element = context.WareHouses.FirstOrDefault(rec => rec.Id == model.Id);
+                if (element != null)
+                {
+                    context.WareHouses.Remove(element);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("Элемент не найден");
+                }
+            }
+        }
+
+        private WareHouse CreateModel(WareHouseBindingModel model, WareHouse wareHouse)
+        {
+            wareHouse.WareHouseName = model.WareHouseName;
+            wareHouse.ResponsiblePersonFCS = model.ResponsiblePersonFCS;
+            wareHouse.DateCreate = model.DateCreate;
+            return wareHouse;
+        }
+
+        private WareHouse CreateModel(WareHouseBindingModel model, WareHouse wareHouse,
+       IceCreamDatabase context)
+        {
+            wareHouse.WareHouseName = model.WareHouseName;
+            wareHouse.ResponsiblePersonFCS = model.ResponsiblePersonFCS;
+            wareHouse.DateCreate = model.DateCreate;
+            if (model.Id.HasValue)
+            {
+                var productIngridient = context.WareHouseIngredients.Where(rec =>
+                rec.WareHouseId == model.Id.Value).ToList();
+                // удалили те, которых нет в модели
+                context.WareHouseIngredients.RemoveRange(productIngridient.Where(rec =>
+                !model.WareHouseIngredients.ContainsKey(rec.IngredientId)).ToList());
+                context.SaveChanges();
+                // обновили количество у существующих записей
+                foreach (var updateIngridient in productIngridient)
+                {
+                    updateIngridient.Count =
+                    model.WareHouseIngredients[updateIngridient.IngredientId].Item2;
+                    model.WareHouseIngredients.Remove(updateIngridient.IngredientId);
+                }
+                context.SaveChanges();
+            }
+            // добавили новые
+            foreach (var pc in model.WareHouseIngredients)
+            {
+                context.WareHouseIngredients.Add(new WareHouseIngredient
+                {
+                    WareHouseId = wareHouse.Id,
+                    IngredientId = pc.Key,
+                    Count = pc.Value.Item2,
+                });
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            return wareHouse;
+        }
+
+        public bool CheckAndTake(int IceCreamId, int Count)
+        {
+            using (var context = new IceCreamDatabase())
+            {
+                var list = GetFullList();
+                var DCount = context.IceCreamIngredients.Where(rec => rec.IceCreamId == IceCreamId)
+                    .ToDictionary(rec => rec.IngredientId, rec => rec.Count * Count);
+
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var key in DCount.Keys.ToArray())
+                        {
+                            foreach (var wareHouseIngridient in context.WareHouseIngredients.Where(rec => rec.IngredientId == key))
+                            {
+                                if (wareHouseIngridient.Count > DCount[key])
+                                {
+                                    wareHouseIngridient.Count -= DCount[key];
+                                    DCount[key] = 0;
+                                    break;
+                                }
+                                else
+                                {
+                                    DCount[key] -= wareHouseIngridient.Count;
+                                    wareHouseIngridient.Count = 0;
+                                }
+                            }
+                            if (DCount[key] > 0)
+                            {
+                                transaction.Rollback();
+                                return false;
+                            }
+                        }
+                        context.SaveChanges();
+                        transaction.Commit();
+
+                        return true;
                     }
                     catch
                     {

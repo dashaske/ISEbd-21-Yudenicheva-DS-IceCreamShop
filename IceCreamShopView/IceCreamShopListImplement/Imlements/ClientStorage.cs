@@ -35,7 +35,7 @@ namespace IceCreamShopListImplement.Imlements
             List<ClientViewModel> result = new List<ClientViewModel>();
             foreach (var client in source.Clients)
             {
-                if (client.Email.Contains(model.Email))
+                if (client.Email == model.Email && client.Password == model.Password)
                 {
                     result.Add(CreateModel(client));
                 }
@@ -51,7 +51,7 @@ namespace IceCreamShopListImplement.Imlements
             }
             foreach (var client in source.Clients)
             {
-                if (client.Id == model.Id)
+                if (client.Id == model.Id || client.ClientFIO == model.ClientFIO)
                 {
                     return CreateModel(client);
                 }

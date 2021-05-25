@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IceCreamDatabaseImplement.Models
 {
-    public class Client
+    public class Implementer
     {
         public int Id { get; set; }
 
         [Required]
-        public string ClientFIO { get; set; }
-        
-        [Required]
-        public string Email { get; set; }
+        public string ImplementerFIO { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public int WorkingTime { get; set; }
 
-        [ForeignKey("ClientId")]
+        [Required]
+        public int PauseTime { get; set; }
+
+        [ForeignKey("ImplementerId")]
         public List<Order> Order { get; set; }
     }
 }
