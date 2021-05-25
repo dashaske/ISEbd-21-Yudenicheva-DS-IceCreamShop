@@ -39,13 +39,18 @@ namespace IceCreamClientApp.Controllers
 
         public IActionResult Mails(int page = 1)
         {
+            if (Program.Client != null)
+            {
+                APIClient.GetRequest <List<MessageInfoViewModel>>($"api/client/getmessages?clientId={Program.Client.Id}");
+            }
             if (Program.Client == null)
             {
                 return Redirect("~/Home/Enter");
-            }
+            }         
             int pageSize = 7;   // кол-во элементов на странице            
             return View(APIClient.GetRequest<PageViewModel>($"api/client/GetPage?pageSize={pageSize}" +
                 $"&page={page}&ClientId={Program.Client.Id}"));
+            
         }
 
         [HttpPost]
@@ -153,5 +158,6 @@ namespace IceCreamClientApp.Controllers
             IceCreamViewModel prod = APIClient.GetRequest<IceCreamViewModel>($"api/main/geticecream?icecreamId={icecream}");
             return count * prod.Price;
         }
+       
     }
 }
