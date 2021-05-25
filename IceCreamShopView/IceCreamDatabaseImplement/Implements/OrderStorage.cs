@@ -36,6 +36,24 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 return null;
             }
+            if (model.DateFrom != null && model.DateTo != null)
+            {
+                using (var context = new IceCreamDatabase())
+                {
+                    return context.Orders.Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
+                        .Select(rec => new OrderViewModel
+                        {
+                            Id = rec.Id,
+                            IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
+                            IceCreamId = rec.IceCreamId,
+                            Count = rec.Count,
+                            Sum = rec.Sum,
+                            Status = rec.Status,
+                            DateCreate = rec.DateCreate,
+                            DateImplement = rec.DateImplement
+                        }).ToList();
+                }
+            }
             using (var context = new IceCreamDatabase())
             {
                 return context.Orders
@@ -50,8 +68,8 @@ namespace IceCreamDatabaseImplement.Implements
                     Status = rec.Status,
                     DateCreate = rec.DateCreate,
                     DateImplement = rec.DateImplement
-                })
-                .ToList();
+                }).ToList();
+
             }
         }
 
