@@ -54,7 +54,10 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
             // ищем заказы, которые уже в работе (вдруг исполнителя прервали)
             var runOrders = await Task.Run(() => _orderStorage.GetFilteredList(new
             OrderBindingModel
-            { ImplementerId = implementer.Id }));
+            { 
+                ImplementerId = implementer.Id 
+            }));
+
             foreach (var order in runOrders)
             {
                 // делаем работу заново

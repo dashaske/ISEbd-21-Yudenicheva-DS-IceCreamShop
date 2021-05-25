@@ -167,7 +167,9 @@ namespace IceCreamShopView
             this.Controls.Add(this.dataGridView);
             this.Name = "FormImplementers";
             this.Text = "Исполнители";
+
             this.Load += new System.EventHandler(this.FormImplementers_Load);
+            
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
 
