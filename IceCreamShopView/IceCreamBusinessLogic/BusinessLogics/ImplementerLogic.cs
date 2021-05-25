@@ -15,7 +15,6 @@ namespace IceCreamShopBusinessLogic.BusinessLogics
         {
             _implementerStorage = implementerStorage;
         }
-
         public List<ImplementerViewModel> Read(ImplementerBindingModel model)
         {
             if (model == null)

@@ -1,10 +1,11 @@
 ﻿using System;
 using IceCreamShopBusinessLogic.BindingModel;
 using IceCreamShopBusinessLogic.BusinessLogics;
-using IceCreamShopBusinessLogic.ViewModel;
+using IceCreamShopBusinessLogic.ViewModels;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Unity;
+using Microsoft.Reporting.WebForms;
 
 namespace IceCreamShopView
 {
@@ -17,13 +18,16 @@ namespace IceCreamShopView
 
         private readonly WorkModeling workModeling;
 
+        private BackUpAbstractLogic _backUpAbstractLogic;
+
         private ReportLogic report;
-        public FormMain(OrderLogic orderLogic, ReportLogic Report, WorkModeling modeling)
+        public FormMain(OrderLogic orderLogic, ReportLogic Report, WorkModeling modeling, BackUpAbstractLogic backUp)
         {
             InitializeComponent();
             _orderLogic = orderLogic;
             workModeling = modeling;
             report = Report;
+            _backUpAbstractLogic = backUp;
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -34,20 +38,12 @@ namespace IceCreamShopView
         {
             try
             {
-                var list = _orderLogic.Read(null);
-                if (list != null)
-                {
-                    dataGridView.DataSource = list;
-                    dataGridView.Columns[0].Visible = false;
-                    dataGridView.Columns[1].Visible = false;
-                    dataGridView.Columns[2].Visible = false;
-                    dataGridView.Columns[3].Visible = false;
-                }
+                Program.ConfigGrid(_orderLogic.Read(null), dataGridView);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
+                MessageBoxIcon.Error);
             }
         }
 
@@ -142,6 +138,28 @@ namespace IceCreamShopView
         {
             var form = Container.Resolve<FormMails>();
             form.ShowDialog();
+        }
+
+        private void создатьБэкапToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_backUpAbstractLogic != null)
+                {
+                    var fbd = new FolderBrowserDialog();
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        _backUpAbstractLogic.CreateArchive(fbd.SelectedPath);
+                        MessageBox.Show("Бекап создан", "Сообщение",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            }
         }
     }
 }

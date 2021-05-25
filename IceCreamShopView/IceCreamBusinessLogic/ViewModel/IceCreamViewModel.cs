@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using IceCreamShopBusinessLogic.Attributes;
 
 namespace IceCreamShopBusinessLogic.ViewModels
 {
@@ -8,12 +9,13 @@ namespace IceCreamShopBusinessLogic.ViewModels
     public class IceCreamViewModel
     {
         [DataMember]
+        [Column(title: "Номер", width: 100, visible: false)]
         public int Id { get; set; }
         [DataMember]
-        [DisplayName("Название мороженого")]
+        [Column(title: "Название мороженого", gridViewAutoSize: GridViewAutoSize.Fill)]
         public string IceCreamName { get; set; }
         [DataMember]
-        [DisplayName("Цена")]
+        [Column(title: "Цена", width: 100)]
         public decimal Price { get; set; }
         [DataMember]
         public Dictionary<int, (string, int)> IceCreamIngredients { get; set; }
