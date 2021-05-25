@@ -5,7 +5,7 @@ using IceCreamShopBusinessLogic.ViewModels;
 using IceCreamShopBusinessLogic.BindingModels;
 using System.Linq;
 using IceCreamDatabaseImplement.Models;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace IceCreamDatabaseImplement.Implements
 {
@@ -15,16 +15,18 @@ namespace IceCreamDatabaseImplement.Implements
         {
             using (var context = new IceCreamDatabase())
             {
-                return context.Orders.Select(rec => new OrderViewModel
+                return context.Orders.Include(rec => rec.IceCream).Include(rec => rec.Client).Select(rec => new OrderViewModel
                 {
                     Id = rec.Id,
-                    IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
+                    IceCreamName = rec.IceCream.IceCreamName,
                     IceCreamId = rec.IceCreamId,
                     Count = rec.Count,
                     Sum = rec.Sum,
                     Status = rec.Status,
                     DateCreate = rec.DateCreate,
-                    DateImplement = rec.DateImplement
+                    DateImplement = rec.DateImplement,
+                    ClientId = rec.ClientId,
+                    ClientFIO = rec.Client.ClientFIO
                 })
                 .ToList();
             }
@@ -36,40 +38,27 @@ namespace IceCreamDatabaseImplement.Implements
             {
                 return null;
             }
-            if (model.DateFrom != null && model.DateTo != null)
-            {
-                using (var context = new IceCreamDatabase())
-                {
-                    return context.Orders.Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
-                        .Select(rec => new OrderViewModel
-                        {
-                            Id = rec.Id,
-                            IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
-                            IceCreamId = rec.IceCreamId,
-                            Count = rec.Count,
-                            Sum = rec.Sum,
-                            Status = rec.Status,
-                            DateCreate = rec.DateCreate,
-                            DateImplement = rec.DateImplement
-                        }).ToList();
-                }
-            }
+
             using (var context = new IceCreamDatabase())
             {
                 return context.Orders
-                .Where(rec => rec.Id.Equals(model.Id))
+                .Where(rec => (model.ClientId.HasValue && rec.ClientId == model.ClientId) || (!model.DateFrom.HasValue && !model.DateTo.HasValue && rec.DateCreate == model.DateCreate) ||
+                (model.DateFrom.HasValue && model.DateTo.HasValue && rec.DateCreate.Date
+                >= model.DateFrom.Value.Date && rec.DateCreate.Date <= model.DateTo.Value.Date))
                 .Select(rec => new OrderViewModel
                 {
                     Id = rec.Id,
-                    IceCreamName = context.IceCreams.FirstOrDefault(r => r.Id == rec.IceCreamId).IceCreamName,
+                    IceCreamName = rec.IceCream.IceCreamName,
                     IceCreamId = rec.IceCreamId,
                     Count = rec.Count,
                     Sum = rec.Sum,
                     Status = rec.Status,
                     DateCreate = rec.DateCreate,
-                    DateImplement = rec.DateImplement
-                }).ToList();
-
+                    DateImplement = rec.DateImplement,
+                    ClientId = rec.ClientId,
+                    ClientFIO = rec.Client.ClientFIO
+                })
+                .ToList();
             }
         }
 
@@ -93,7 +82,9 @@ namespace IceCreamDatabaseImplement.Implements
                     Sum = order.Sum,
                     Status = order.Status,
                     DateCreate = order.DateCreate,
-                    DateImplement = order.DateImplement
+                    DateImplement = order.DateImplement,
+                    ClientId = order.ClientId,
+                    ClientFIO = order.Client.ClientFIO
                 } :
                 null;
             }
@@ -104,7 +95,7 @@ namespace IceCreamDatabaseImplement.Implements
             using (var context = new IceCreamDatabase())
             {
                 context.Orders.Add(CreateModel(model, new Order()));
-                context.SaveChanges();
+                context.SaveChanges(); 
             }
         }
 
@@ -149,6 +140,7 @@ namespace IceCreamDatabaseImplement.Implements
             order.Status = model.Status;
             order.DateCreate = model.DateCreate;
             order.DateImplement = model.DateImplement;
+            order.ClientId = (int)model.ClientId; 
             return order;
         }
     }

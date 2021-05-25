@@ -1,0 +1,63 @@
+﻿@using IceCreamShopBusinessLogic.ViewModels
+
+@model List<WareHouseViewModel>
+
+@{ ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Склады</h1>
+</div>
+<div class="text-center">
+    @{ if (Model == null)
+        {
+            <h3 class="display-4">Авторизируйтесь</h3> return;
+        }
+        <p>
+            <a asp-action="Create">Создать склад</a>
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Номер
+                    </th>
+                    <th>
+                        Название
+                    </th>
+                    <th>
+                        Дата создания
+                    </th>
+                    <th>
+                        ФИО ответственного
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem =>
+                                 item.WareHouseName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem =>
+                                 item.DateCreate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ResponsiblePersonFCS)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a>|
+                            <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                        </td>
+                    </tr>
+}
+            </tbody>
+        </table> }
+</div>
