@@ -103,7 +103,6 @@ namespace IceCreamFileImplement
             }
             return list;
         }
-
         private List<Order> LoadOrders()
         {
             var list = new List<Order>();
@@ -202,7 +201,6 @@ namespace IceCreamFileImplement
                 xDocument.Save(WareHouseFileName);
             }
         }
-
         private void SaveIceCreams()
         {
             if (IceCreams != null)
