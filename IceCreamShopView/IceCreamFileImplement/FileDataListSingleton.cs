@@ -114,7 +114,6 @@ namespace IceCreamFileImplement
             }
             return list;
         }
-
         private List<Order> LoadOrders()
         {
             var list = new List<Order>();
